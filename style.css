@@ -1,0 +1,33 @@
+:root { color-scheme: dark; font-family: system-ui, sans-serif; color: #e8eee9; background: #101c18; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 28px; background: #101b18; border-bottom: 1px solid #ffffff18; }
+.brand { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.mark { font-size: 32px; font-weight: 900; font-style: italic; color: #a7ed62; }
+h1 { margin: 0; font-size: 20px; font-style: italic; letter-spacing: -0.6px; }
+h1 span { font-size: 9px; font-weight: 500; letter-spacing: 2px; font-style: normal; color: #9daea4; margin-left: 9px; }
+.brand p { margin: 5px 0 0; font-size: 11px; color: #84998d; }
+.separation { width: min(320px, 35vw); }
+.separation label { display: flex; justify-content: space-between; gap: 20px; font-size: 12px; }
+output { color: #a7ed62; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: #a7ed62; margin: 10px 0 0; cursor: pointer; }
+.actions { display: flex; align-items: center; gap: 22px; font-size: 12px; }
+.population { color: #8ca295; white-space: nowrap; }
+.population b { color: #eef4ef; font-size: 17px; font-variant-numeric: tabular-nums; }
+.debug { display: flex; align-items: center; gap: 6px; color: #bdc9c1; cursor: pointer; }
+input[type=checkbox] { accent-color: #a7ed62; }
+button { padding: 10px 15px; border: 1px solid #73934e; border-radius: 6px; background: #a7ed6210; color: #d8edc7; font: inherit; cursor: pointer; white-space: nowrap; }
+button:hover { background: #a7ed6225; }
+button[aria-pressed=true] { background: #a7ed6233; border-color: #a7ed62; }
+#add-obstacle { min-width: 180px; }
+:focus-visible { outline: 2px solid #a7ed62; outline-offset: 4px; }
+canvas { display: block; max-width: 100%; }
+footer { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 36px; padding: 8px 28px; font-size: 10px; color: #8da195; }
+kbd { font: inherit; color: #d5e2d8; }
+@media (max-width: 850px) {
+  .toolbar { flex-wrap: wrap; gap: 18px; padding: 14px 18px; }
+  .brand { flex: 1; }
+  .separation { order: 3; width: 100%; }
+  .actions { gap: 12px; }
+  footer { padding: 8px 18px; flex-wrap: wrap; }
+}

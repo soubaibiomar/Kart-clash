@@ -1,0 +1,14 @@
+/** Local, opt-in samples of actual player inputs. No clock, RNG or extra inference. */
+class KartDemonstration {
+ static SCHEMA='kart-demonstration-v2';
+ static SIMULATION='rival-v3';
+ static MAX=1800;
+ constructor(w){if(w.challenge||w.teamMode||w.trackTrial)throw Error('Enregistre en chacun pour soi.');this.active=true;this.data={gameplay:w.gameplay||KartGameplay.CLASSIC,schema:KartDemonstration.SCHEMA,modelSchema:CombatBrain.SCHEMA,actionSchema:'turn-throttle-fire-drift-v2',observationSchema:'local-v1',simulation:KartDemonstration.SIMULATION,dt:KC.DT,seed:w.options.seed,layout:w.options.layout||0,bots:w.options.bots,difficulty:w.options.difficulty||'normal',config:CombatBrain.config(),samples:[],events:[]};}
+ capture(w,input){if(!this.active||w.paused||w.phase!=='playing'||!input)return;const k=w.player,a=k.lastAction;this.data.samples.push({tick:w.tick,input:input.map(n=>Math.round(n*1e6)/1e6),action:[a.turn,a.throttle,a.fire?1:-1,a.drift?1:-1]});if(this.data.samples.length>=KartDemonstration.MAX)this.active=false;}
+ terminal(e){if(this.active&&['elimination','respawn','finish'].includes(e.type)&&this.data.events.length<100)this.data.events.push({type:e.type,tick:e.tick,id:e.id});}
+ stop(){this.active=false;return JSON.parse(JSON.stringify(this.data));}
+ static validate(d,config){if(d?.gameplay!==undefined)KartGameplay.validate(d.gameplay);const c=CombatBrain.config(d?.config);if(!d||d.schema!==this.SCHEMA||d.modelSchema!==CombatBrain.SCHEMA||d.actionSchema!=='turn-throttle-fire-drift-v2'||d.observationSchema!=='local-v1'||d.simulation!==this.SIMULATION||d.dt!==KC.DT||!Number.isInteger(d.seed)||!Number.isInteger(d.layout)||!Number.isInteger(d.bots)||d.bots<0||d.bots>12||!['easy','normal','hard'].includes(d.difficulty)||!Array.isArray(d.samples)||d.samples.length<20||d.samples.length>this.MAX)throw Error('Démonstration incompatible ou trop courte (20–1800 relevés).');if(config&&(c.sensors!==config.sensors||c.range!==config.range))throw Error('Les capteurs doivent correspondre à la démonstration.');let tick=-1;for(const s of d.samples){if(!Number.isInteger(s.tick)||s.tick<=tick||!Array.isArray(s.input)||s.input.length!==c.sensors+21||!Array.isArray(s.action)||s.action.length!==4||[...s.input,...s.action].some(n=>!Number.isFinite(n)||n< -1||n>1))throw Error('Relevé invalide.');tick=s.tick;}if(!Array.isArray(d.events)||d.events.length>100||d.events.some(e=>!['elimination','respawn','finish'].includes(e.type)||!Number.isInteger(e.tick)||!Number.isInteger(e.id)))throw Error('Événements invalides.');return JSON.parse(JSON.stringify(d));}
+ static saved(){const d=KartStorage.read('demonstration',null);try{return this.validate(d);}catch{return null;}}
+ static save(d){const valid=this.validate(d);if(!KartStorage.write('demonstration',valid))throw Error('Stockage plein. Exporte ou supprime la démonstration.');return valid;}
+ static remove(){try{localStorage.removeItem('kart-clash-demonstration');}catch{} }
+}

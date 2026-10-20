@@ -1,0 +1,2 @@
+class HomingMissile extends Projectile{constructor(id,owner,w){super(id,owner,'homing',w);this.target=KartPerception.nearest(owner,w.karts,k=>k.alive&&k.id!==owner.id&&!KartWeapons.allied(owner.id,k.id,w)&&Math.abs((k.elevation||0)-this.elevation)<=30&&KartWeapons.clearAt(w,this,owner.pos,k.pos),650)?.id;}
+ steer(w){const target=w.karts.find(k=>k.id===this.target&&k.alive&&Math.abs((k.elevation||0)-this.elevation)<=30);return target?SteeringBehaviors.pursue(this,target,10):createVector(0,0);}}

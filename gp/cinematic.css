@@ -1,0 +1,33 @@
+/* Charcoal menu surfaces, shared by Course, Garage and Training. */
+:root{--surface:#252629;--ink:#f1f2f4;--muted:#c1c4cb;--line:#43454b;--accent:#f14a54;color-scheme:dark}
+body{background:#1d1e21}
+button.primary,.device-state button.primary{background:#c82e3d;color:#fff}
+button.primary:hover:not(:disabled),.device-state button.primary:hover:not(:disabled){background:#aa2230;color:#fff}
+.game-nav{background:#202124;border-color:#3c3e43}
+.game-nav nav a{color:#cdd0d6}.game-nav nav a:hover{color:white;background:#292b30}
+.game-nav nav a[aria-current=page]{background:#292b30}
+.race-tools,.team-radio,.race-tools[open],.team-radio[open],.camera-dock,.timing,.driver-panel,.broadcast-overlay,.radio-transmission{background:#232428;border-radius:12px}
+.race-tools[open],.team-radio[open]{box-shadow:0 16px 40px #0005}
+.race-tools summary,.team-radio summary{font-weight:600}
+.race-tools label,.radio-content label{color:#e1e3e8}
+.race-tools select,.race-tools input:not([type=checkbox]):not([type=range]),.radio-content select,.radio-content textarea{background:#303237;border-color:#5c6069;color:#f1f2f4}
+.camera-dock{padding:5px;gap:3px}.camera-dock button{border-radius:8px;color:#e0e2e7}
+.camera-dock button[aria-pressed=true]{background:#e5e7eb;color:#202124}
+.timing-row{border-bottom-color:#3a3c42}.timing-row.selected{background:#393c43}
+.driver-panel h2{font-weight:600}.telemetry strong{font-variant-numeric:tabular-nums}
+.stage[data-camera=chase] .stage-caption{display:none}
+.stage[data-camera=chase] .driver-panel{background:#232428;bottom:46px}
+.platform-workshop .workshop{max-width:1380px}
+.workshop .intro{color:#c8cbd2;max-width:70ch}
+.workshop h2{font-weight:600}.workshop-note{color:#c4c7ce}
+.garage-showcase{background:#252629}.garage-driver{border-bottom-color:#42444b}
+.garage-driver:hover{background:#303237!important}
+.device-state,.training-chart,.training-log,#training-preview{background:#252629}
+.workshop-form select,.workshop-form input:not([type=checkbox]),.training-observer select{background:#2c2e33;border-color:#62656e;color:#f1f2f4}
+.training-facts dt,.training-overview p,.driver-selection-tools span{color:#c8cbd2}
+.driver-selection label:has(input:checked){background:#35383e}
+dialog{background:#252629;color:#f1f2f4;border:1px solid #4c4f56;border-radius:16px;box-shadow:none}
+.training-chart{padding:12px;box-sizing:border-box}
+.garage-showcase{padding-bottom:16px}
+dialog::backdrop{background:#08090bc9}
+@media(max-width:700px){.stage[data-camera=chase] .driver-panel{bottom:124px}.game-nav nav a{padding-inline:9px}.workshop{padding-inline:20px}}

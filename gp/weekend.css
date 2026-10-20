@@ -1,0 +1,43 @@
+/* Extend the existing APEX broadcast identity; keep the circuit as the focal surface. */
+@font-face{font-family:Barlow;src:url('fonts/Barlow-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:Barlow;src:url('fonts/Barlow-SemiBold.ttf') format('truetype');font-weight:600 900;font-display:swap}
+:root{--muted:#a7b8ac;--control-surface:#1d2923;--control-gap:12px}
+::selection{background:#d8ed9c;color:#172018}*{scrollbar-color:#6c816f #16201d;scrollbar-width:thin}
+.weekend-strip{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:56px;padding:10px 24px;border-bottom:1px solid var(--line);background:#141e19}
+#weekend-sessions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#weekend-sessions span{font-size:11px;font-weight:650;padding:8px 11px;color:#a7b8ac;border-bottom:2px solid transparent}
+#weekend-sessions .current{color:var(--lime);border-color:var(--lime);background:#d8ed9c0c}
+#weekend-sessions .done{color:#d1decf}
+.session-actions{display:flex;align-items:center;gap:16px;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#next-session{color:var(--lime);font-weight:650}
+button:disabled{opacity:.4;cursor:default}button[aria-pressed=true]{color:#172018;background:var(--lime)}
+.race-layout{height:calc(100dvh - 410px);min-height:440px;grid-template-columns:244px minmax(0,1fr)}
+.stage-caption{pointer-events:none}.stage-caption>span:empty{display:none}.stage-caption h1{font-size:21px;letter-spacing:-.02em}
+.driver-panel{width:250px;right:18px;top:18px;background:#142019f5}
+.driver-panel h2{font-size:22px;letter-spacing:-.02em}.driver-sub{font-size:11px}.driver-panel small{color:#a5b8a9}
+.driver-detail{font-size:9px;color:#afc0b1}#strategy-note{font-size:10px;color:#a7b8ac}.pit-controls button{font-size:11px}
+.timing-row{height:calc((100% - 90px)/22);min-height:22px}.timing-row:focus-visible{outline-offset:-3px}
+.timing-heading,.timing-columns,.interval{color:#afbfaf}.timing-columns{font-size:9px}.fastest strong{font-size:11px}
+.broadcast-overlay{max-width:390px;min-width:260px;background:#112018f5;border:1px solid #5b7358;box-shadow:0 18px 50px #0005}
+.broadcast-overlay small{display:none}.broadcast-overlay strong{font-size:28px;letter-spacing:-.02em}.broadcast-overlay p{font-size:13px;line-height:1.6;color:#c2d0bf}
+.control-desk{display:flex;align-items:center;gap:24px;padding:14px 24px;border-top:1px solid var(--line);background:#18241d;flex-wrap:wrap}
+.race-direction,.driving-tools{display:flex;align-items:center;gap:8px}.desk-label{font-size:10px;letter-spacing:1px;color:#b5c6b6;margin-right:4px}
+.control-desk button{font-size:12px;padding:9px 12px}.control-desk label{font-size:12px;color:#d2ddce;display:flex;justify-content:space-between;gap:12px}
+.live-tuning{width:230px;display:grid;gap:5px}.live-tuning>span{font-size:10px;line-height:1.4;color:#b5c6b6}
+.control-desk input[type=range]{accent-color:var(--lime);height:18px;cursor:pointer;width:100%;margin:0}
+.driving-tools{margin-left:auto;flex-wrap:wrap;max-width:390px}.driving-tools label{margin-left:10px}.driving-tools input[type=range]{width:115px}
+.keyboard-help{margin:0;padding:9px 24px;background:#142019;font-size:11px;line-height:1.5;color:#b5c6b6;border-top:1px solid var(--line)}
+#deploy-red{color:#ff9aa3;border-color:#ff9aa344}#deploy-yellow{color:#f5d377}#flag-pill[data-flag=RED]{background:#6d2029;color:#ffb8c0}
+.race-controls{min-height:62px;height:auto;flex-wrap:wrap;padding:12px 24px}.race-controls label{font-size:10px}.race-controls button{font-size:12px}
+.commentary p{font-size:12px}.dialog-heading small{display:none}.dialog-intro,.setup-grid label,.rules-note{font-size:12px;color:#b1c1b1}
+.setup-grid input,.setup-grid select{min-height:44px}.rules-note{line-height:1.65}.dialog-heading h2{letter-spacing:-.02em}.setup-grid{gap:20px}
+@media(min-width:1500px){.control-desk{flex-wrap:nowrap}.race-layout{min-height:440px}.driver-panel{width:265px}}
+@media(max-width:1100px){.race-layout{grid-template-columns:200px minmax(0,1fr);min-height:520px}.control-desk{gap:14px}.driving-tools{margin-left:0}.driver-panel{width:215px}.driver-panel h2{font-size:19px}.race-layout{height:calc(100dvh - 450px)}}
+@media(max-width:780px){.weekend-strip{padding:10px 12px;flex-direction:column;align-items:stretch;gap:8px}#weekend-sessions{gap:1px}#weekend-sessions span{font-size:10px;padding:7px}.session-actions{justify-content:space-between;font-size:11px}.race-layout{height:auto;min-height:0;grid-template-columns:132px minmax(0,1fr)}.stage{min-height:520px}.timing-row{height:25px;min-height:25px}.driver-panel{display:block;position:relative;top:auto;right:auto;width:auto;margin:10px;padding:14px}.stage #gp-canvas{height:300px;position:relative}.stage-caption{top:12px;left:12px}.stage-caption h1{font-size:15px}.broadcast-overlay{top:150px;min-width:170px;max-width:90%;padding:16px}.broadcast-overlay strong{font-size:20px}.broadcast-overlay p{font-size:11px}.track-legend{display:none}.control-desk{padding:14px 12px;align-items:flex-start}.race-direction{flex-wrap:wrap}.desk-label{width:100%}.live-tuning{width:100%;max-width:420px}.driving-tools{max-width:none}.keyboard-help{padding:10px 12px}.race-controls{padding:12px}.view-controls #deploy-sc,.view-controls #deploy-vsc{display:block}.race-controls button{font-size:11px}.race-controls label{font-size:9px}.race-controls .view-controls{flex-wrap:wrap;justify-content:center}.commentary-mark{display:none}.commentary p{font-size:11px}.setup-grid{grid-template-columns:1fr}.timing-heading{font-size:8px}.timing-columns{font-size:7px}.timing-row .interval{font-size:8px}.fastest strong{font-size:9px}.fastest{padding:14px 8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+/* Legible race data at every viewport; explicit overrides replace the old micro-type. */
+:root{font-family:Barlow,'Segoe UI',sans-serif;font-size:14px}
+:is(.brand small,.meeting,.meeting strong,.edition,.masthead nav a,.flag-pill,#session-note,.session-meta,.timing-heading,.timing-columns,.timing-row,.position,.driver-abbr,.interval,.tyre-dot,.fastest small,.fastest strong,.stage-caption p,.driver-panel-title,.driver-sub,.telemetry small,.meter-label,.driver-detail,#strategy-note,.track-legend,.commentary-mark,.commentary button,.race-controls label,.race-controls .check,.race-controls select,kbd,.rules-note,.log-row b,.podium-place span,table th,td small){font-size:11px;letter-spacing:.02em}
+.driver-panel-title{line-height:1.5}.telemetry small{line-height:1.6}.meter-label{margin-top:14px}.driver-detail{line-height:1.5}
+.live-dot,.start-light.on{text-shadow:none;box-shadow:none}.broadcast-overlay{box-shadow:none}dialog{box-shadow:0 18px 50px #0006;border:0}
+.dialog-intro,.keyboard-help,.rules-note{font-size:13px}.stage-caption h1{font-family:Barlow,'Segoe UI',sans-serif;font-weight:700}

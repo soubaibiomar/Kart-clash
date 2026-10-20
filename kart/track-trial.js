@@ -1,0 +1,6 @@
+class TrackTrial {
+ constructor(w){this.data=w.arena.track;this.markers=this.data.points.map((p,i)=>Object.assign(new ObjectiveMarker('track-gate-'+i,p.x,p.y),{elevation:p.elevation||0}));for(const k of w.karts){k.pos.set(this.markers[0].pos);k.vel.set(0,0);k.heading=Math.atan2(this.data.points[1].y-k.pos.y,this.data.points[1].x-k.pos.x);k.elevation=this.data.points[0].elevation||0;k.surfaceIndex=0;k.trackState={next:1,passed:0,laps:0,finished:false};k.lastProgress=w.time;}}
+ target(k){return this.markers[k.trackState.next];}
+ assign(w){for(const k of w.karts){k.missionGoal=this.target(k).pos;k.precision=false;}}
+ tick(w){for(const k of w.karts){const s=k.trackState;if(s.finished)continue;const goal=this.target(k);if(Math.abs((k.elevation||0)-(goal.elevation||0))<=40&&KartCollision.circleSweep(k.motionSample?.origin||k.pos,k.pos,goal.pos,Math.min(65,this.data.width*.28))!==null){s.passed++;if(s.next===this.markers.length-1){if(this.data.closed)s.next=0;else{s.finished=true;s.laps=1;}}else if(s.next===0){s.laps++;s.finished=true;}else s.next++;k.route=[];this.timing?.crossing(w,k);if(s.finished){k.vel.set(0,0);w.emit('finish-track',k);}}}this.timing?.sample(w);if(w.player.trackState.finished)w.finish();}
+}

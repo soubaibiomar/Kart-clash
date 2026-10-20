@@ -1,0 +1,4 @@
+class Mine extends Vehicle{
+ constructor(id,owner,w){super(owner.pos.x-Math.cos(owner.heading)*35,owner.pos.y-Math.sin(owner.heading)*35,0,0);this.vel.set(0,0);this.id=id;this.owner=owner.id;this.r=27;this.elevation=owner.elevation||0;this.detectionRadius=46;const def=KartGameplay.item(w.gameplay,'mine');this.damage=def.damage;this.armedAt=w.time+(def.armDelay??.8);this.expires=w.time+KC.items.mine.life;this.removed=false;this.detection={armed:false,radius:this.detectionRadius,targetId:null};}
+ detect(w){const armed=w.time>=this.armedAt&&w.time<this.expires&&!this.removed;const target=armed?KartPerception.nearest(this,w.karts,k=>k.alive&&!KartWeapons.allied(this.owner,k.id,w)&&Math.abs((k.elevation||0)-this.elevation)<=30&&KartWeapons.clearAt(w,this,this.pos,k.pos),this.detectionRadius):null;this.detection={armed,radius:this.detectionRadius,targetId:target?.id??null};return target;}
+}

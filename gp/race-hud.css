@@ -1,0 +1,87 @@
+/* APEX cockpit: tools above the circuit, driving console below it. */
+.race-game{--hud:#191c21;--hud-raised:#24282f;--hud-line:#3b424c;--hud-muted:#bfc7d2}
+.race-game .game-nav{height:60px;padding-inline:24px;gap:28px;background:#111419;border-color:#30363e}
+.race-game .game-brand{font-size:27px}.race-game .game-brand span{display:none}
+.race-game .game-nav nav{gap:8px}.race-game .game-nav nav a{font-size:14px;background:transparent}
+.race-game #meeting-name{font-size:12px;color:var(--hud-muted)}.race-game #race-clock{font-size:16px;font-variant-numeric:tabular-nums}
+.race-game .stage{height:calc(100dvh - 60px);min-height:660px;background:var(--hud)}
+.race-game #gp-canvas{top:62px;bottom:210px;height:auto;inset-inline:0}
+.race-toolbar{position:absolute;top:0;left:0;right:0;height:62px;display:flex;align-items:center;gap:12px;padding:10px 24px;background:var(--hud);border-bottom:1px solid var(--hud-line);z-index:6!important}
+.race-game .session-actions{position:static;margin-right:auto;display:flex;flex-direction:row;align-items:center;gap:12px;max-width:250px;font-size:12px;color:#e0e4eb}
+.race-game .session-actions button{font-size:12px;min-height:36px}
+.race-game .camera-dock{position:static;transform:none;display:flex;gap:3px;padding:3px;background:#101318;border-radius:8px;flex-shrink:0}
+.race-game .camera-dock button{font-size:12px;min-height:34px;padding:8px 16px;border-radius:6px;background:transparent;color:#cbd3de}
+.race-game .camera-dock button[aria-pressed=true]{background:#e6ebf1;color:#161b22}
+.race-game #render-state{display:none}
+.race-game .race-tools,.race-game .team-radio{position:static;width:auto;background:transparent;border-radius:8px;flex-shrink:0}
+.race-game .race-tools>summary,.race-game .team-radio>summary{font-size:12px;font-weight:500;padding:10px 14px;min-height:38px;border:1px solid #4b5360;border-radius:7px}
+.race-game .race-tools[open],.race-game .team-radio[open]{position:absolute;right:24px;top:10px;width:350px;background:var(--hud-raised);box-shadow:0 14px 32px #0005;z-index:8}
+.race-game .race-tools[open]>summary,.race-game .team-radio[open]>summary{border:0;border-radius:0;min-height:42px;font-size:13px;padding:12px 18px}
+.race-game .tool-content,.race-game .radio-content{max-height:calc(100dvh - 200px);padding:10px 18px 20px;gap:16px}
+.race-game .race-tools[open]~.team-radio{visibility:hidden}
+.race-game .timing{left:20px;top:82px;width:196px;background:#14181ef5;border-radius:8px;overflow:hidden}
+.race-game .timing-heading{padding:10px 12px;border-bottom:1px solid var(--hud-line);font-size:11px}
+.race-game .timing-heading button{font-size:11px;padding:5px 7px}
+.race-game .timing-row{padding:9px 12px;min-height:38px;font-size:13px;grid-template-columns:16px 2px 27px 1fr 12px;gap:8px}
+.race-game .timing-row.selected{background:#343c48}.race-game .interval{font-size:11px;color:#c6ced9}
+.race-game .fastest{padding:10px 12px;font-size:11px;line-height:1.45}
+.race-game .timing.expanded{max-height:calc(100% - 300px);overflow:auto}
+.race-console{position:absolute;bottom:26px;left:0;right:0;height:184px;background:var(--hud);border-top:1px solid var(--hud-line);display:grid;grid-template-columns:270px minmax(0,1fr);grid-template-rows:auto 1fr;gap:8px 26px;padding:20px 24px;z-index:4!important}
+.race-game .stage-caption,.race-game .stage[data-camera=chase] .stage-caption{position:static;display:block;max-width:none;grid-column:1;grid-row:1}
+.race-game .stage-caption h1{font-size:22px;line-height:1.15;letter-spacing:-.02em;max-width:20ch;margin:0}
+.race-game .stage-caption p{font-size:11px;color:var(--hud-muted);margin:6px 0 0}.race-game #model-status{display:none}
+.race-game .game-actions{position:static;grid-column:1;grid-row:2;max-width:none;gap:8px;align-content:start;margin:0}
+.race-game .game-actions button{min-height:40px;font-size:12px;padding:10px 14px;border-radius:6px}
+.race-game .game-actions p{font-size:11px;line-height:1.5;max-width:260px;margin:2px 0 0;color:#bfc8d4;text-shadow:none}
+.race-game .driver-panel,.race-game .stage[data-camera=chase] .driver-panel{position:static;transform:none;grid-column:2;grid-row:1/3;width:auto;max-width:none;background:transparent;border-radius:0;padding:0 0 0 26px;border-left:1px solid var(--hud-line);display:grid;grid-template-columns:170px minmax(190px,1fr) 150px;grid-template-rows:auto auto auto auto auto;gap:5px 24px}
+.race-game .driver-panel-title{grid-column:1;grid-row:1;font-size:11px;color:#bdc8d6}
+.race-game .driver-panel h2{grid-column:1;grid-row:2;font-size:24px;line-height:1.2;margin:0}
+.race-game .driver-sub{grid-column:1;grid-row:3/5;font-size:12px;flex-direction:column;justify-content:start;align-items:start;gap:4px;color:#c0c9d6}
+.race-game .telemetry{grid-column:2;grid-row:1/5;display:flex;align-items:center;justify-content:space-around;gap:16px;padding:8px 0;border:0;border-top:none}
+.race-game .telemetry>div{flex-direction:column;align-items:center;gap:4px}
+.race-game .telemetry strong{font-size:42px;line-height:1.05;font-weight:500;font-variant-numeric:tabular-nums}
+.race-game .telemetry small{font-size:11px;color:var(--hud-muted);text-align:center}
+.race-game .driver-panel .meter-label{grid-column:3;display:flex;justify-content:space-between;font-size:11px;gap:10px}
+.race-game .driver-panel .meter{grid-column:3;display:block;height:4px;background:#3a424d}
+.race-game .meter-label:has(#tyre-life){grid-row:1}.race-game .meter:has(#tyre-meter){grid-row:2}
+.race-game .meter-label:has(#energy-life){grid-row:3}.race-game .meter:has(#energy-meter){grid-row:4}
+.race-game .pit-controls{grid-column:1/-1;grid-row:5;display:flex;justify-content:flex-end;gap:8px;margin:6px 0 0;padding:8px 0 0;border-top:1px solid var(--hud-line)}
+.race-game .pit-controls select{width:110px;font-size:12px;padding:5px 8px}.race-game .pit-controls button{flex:0 1 160px;min-height:32px;font-size:12px}
+.race-game .broadcast-overlay,.race-game .broadcast-overlay.grid-ready{top:84px;left:50%;right:auto;bottom:auto;transform:translateX(-50%);width:min(370px,calc(100% - 490px));padding:12px 18px;background:#14181ef5;border-radius:8px;text-align:center;pointer-events:none}
+.race-game .broadcast-overlay strong,.race-game .broadcast-overlay.grid-ready strong{font-size:15px;line-height:1.4}
+.race-game .broadcast-overlay p,.race-game .broadcast-overlay.grid-ready p{font-size:12px;line-height:1.5;margin:5px 0 0;color:#cbd5df}
+.race-game .broadcast-overlay.grid-ready{top:auto;bottom:222px;left:20px;transform:none;width:236px;text-align:left}
+.race-game .radio-transmission{left:auto;right:20px;bottom:222px;width:360px;max-width:calc(100% - 40px);background:#14181e}
+.race-game .radio-strip{bottom:0;min-height:26px;padding:6px 24px;background:#0e1116}.race-game .radio-strip p{font-size:11px}
+.race-game .stage:has(.team-radio[open]) .driver-panel{visibility:visible}
+@media(max-width:1100px){
+ .race-game #meeting-name{display:none}.race-game .game-nav{gap:14px}
+ .race-toolbar{gap:8px;padding-inline:18px}.race-game .camera-dock button{padding-inline:12px}
+ .race-game .race-tools>summary,.race-game .team-radio>summary{font-size:11px;padding-inline:10px}
+ .race-console{grid-template-columns:230px minmax(0,1fr);gap:8px 20px;padding-inline:20px}
+ .race-game .driver-panel,.race-game .stage[data-camera=chase] .driver-panel{grid-template-columns:145px minmax(165px,1fr);gap:5px 16px;padding-left:20px}
+ .race-game .driver-panel .meter-label,.race-game .driver-panel .meter{display:none}.race-game .telemetry strong{font-size:34px}
+}
+@media(max-width:700px){
+ .race-game .game-nav{height:54px;padding-inline:12px;gap:10px}.race-game .game-brand{font-size:23px}.race-game .game-nav nav{gap:0}.race-game .game-nav nav a{font-size:12px;padding-inline:8px}.race-game #race-clock{font-size:11px}
+ .race-game .stage{height:calc(100dvh - 54px);min-height:690px}.race-game #gp-canvas{top:106px;bottom:248px}
+ .race-toolbar{height:106px;padding:10px 12px;flex-wrap:wrap;align-content:start;gap:8px}
+ .race-game .camera-dock{order:-1;flex-basis:100%;justify-content:center}.race-game .camera-dock button{flex:1;min-height:32px;font-size:12px;padding:7px 10px}
+ .race-game .session-actions{max-width:140px;min-width:0;font-size:11px;gap:6px;flex:1}.race-game .session-actions span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .race-game .race-tools>summary,.race-game .team-radio>summary{font-size:11px;padding:8px 10px;min-height:34px}
+ .race-game .race-tools[open],.race-game .team-radio[open]{top:54px;right:12px;width:calc(100% - 24px)}
+ .race-game .tool-content,.race-game .radio-content{max-height:calc(100dvh - 240px)}
+ .race-game .timing{top:120px;left:12px;width:145px}.race-game .timing-heading{padding:8px;font-size:11px}.race-game .timing-heading button{font-size:11px;padding:4px}
+ .race-game .timing-row{min-height:32px;padding:7px 8px;grid-template-columns:14px 2px 24px 1fr 10px;gap:5px;font-size:12px}.race-game .interval{font-size:11px}.race-game .fastest{display:none}
+ .race-game .timing.expanded{max-height:calc(100% - 390px)}
+ .race-console{height:222px;bottom:26px;grid-template-columns:1fr;grid-template-rows:auto auto;gap:12px;padding:14px 16px}
+ .race-game .stage-caption,.race-game .stage[data-camera=chase] .stage-caption{display:none}
+ .race-game .driver-panel,.race-game .stage[data-camera=chase] .driver-panel{grid-column:1;grid-row:1;padding:0;border:0;grid-template-columns:130px minmax(130px,1fr);grid-template-rows:auto auto auto;gap:4px 14px}
+ .race-game .driver-panel h2{font-size:21px}.race-game .driver-sub{grid-row:3;font-size:11px;gap:3px}.race-game .telemetry{grid-row:1/4;gap:6px}.race-game .telemetry strong{font-size:30px}.race-game .telemetry small{font-size:11px;line-height:1.3;max-width:68px}
+ .race-game .pit-controls{display:none}.race-game .game-actions{grid-column:1;grid-row:2;gap:8px;border-top:1px solid var(--hud-line);padding-top:12px}.race-game .game-actions button{min-height:38px;padding:8px 14px}.race-game .game-actions p{max-width:none;font-size:11px;margin:0;line-height:1.4}
+ .race-game .broadcast-overlay,.race-game .broadcast-overlay.grid-ready{left:auto;right:12px;top:120px;bottom:auto;transform:none;width:calc(100% - 182px);padding:10px 12px;text-align:left}
+ .race-game .broadcast-overlay strong,.race-game .broadcast-overlay.grid-ready strong{font-size:13px}.race-game .broadcast-overlay p,.race-game .broadcast-overlay.grid-ready p{font-size:11px}
+ .race-game .radio-transmission{left:12px;right:12px;bottom:264px;width:auto;max-width:none}
+ .race-game .stage:has(.race-tools[open]) .timing,.race-game .stage:has(.race-tools[open]) .broadcast-overlay,.race-game .stage:has(.team-radio[open]) .timing,.race-game .stage:has(.team-radio[open]) .broadcast-overlay{visibility:hidden}
+ .race-game .stage:has(.team-radio[open]) .driver-panel{visibility:visible}
+}

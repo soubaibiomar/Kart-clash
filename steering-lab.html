@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>APEX — Circuit de F1</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="libraries/p5.min.js"></script>
+    <script src="path.js"></script>
+    <script src="vehicle.js"></script>
+    <script src="trackBorder.js"></script>
+    <script src="roadObstacle.js"></script>
+    <script src="obstacleAvoidance.js"></script>
+    <script src="borderSteering.js"></script>
+    <script src="raceCar.js"></script>
+    <script src="wanderCar.js"></script>
+    <script src="raceTrack.js"></script>
+    <script src="raceSimulation.js"></script>
+    <script src="sketch.js"></script>
+  </head>
+  <body>
+    <header class="toolbar">
+      <div class="brand"><span class="mark">A/</span><div><h1>APEX <span>RACING LAB</span></h1><p>05.3 / Détection des bordures</p></div></div>
+      <div class="separation"><label for="separation-force">Poids de séparation <output id="separation-value" for="separation-force">1.2×</output></label><input id="separation-force" type="range" min="0" max="5" step="0.1" value="1.2" aria-describedby="separation-help"></div>
+      <div class="separation"><label for="avoidance-force">Évitement des obstacles <output id="avoidance-value" for="avoidance-force">2.0×</output></label><input id="avoidance-force" type="range" min="0" max="5" step="0.1" value="2"></div>
+      <button id="add-obstacle" type="button" aria-pressed="false">+ Obstacle</button>
+      <div class="actions"><a href="index.html">Grand Prix ↗</a><span class="population"><b id="car-count">16</b> voitures</span><label class="debug"><input id="debug-toggle" type="checkbox" aria-keyshortcuts="D"> Debug <kbd>D</kbd></label><button id="restart" type="button">Recommencer ↗</button></div>
+    </header>
+    <main id="race-canvas" aria-label="Simulation de voitures de Formule 1 sur circuit"></main>
+    <footer><span id="separation-help">0× : sans séparation · 5× : répulsion renforcée</span><span>Clic / glisser : ajouter · <kbd>S</kbd> rapide · <kbd>W</kbd> promenade · <kbd>D</kbd> debug</span></footer>
+    <!-- Pas besoin de déclarer un canvas pour dessiner en P5.js -->
+  </body>
+</html>

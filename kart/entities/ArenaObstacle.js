@@ -1,0 +1,1 @@
+class ArenaObstacle extends Vehicle{constructor(id,x,y,w,h,height=65,kind='container'){super(x,y,0,0);this.vel.set(0,0);this.id=id;this.w=w;this.h=h;this.height=height;this.kind=kind;this.r=Math.hypot(w,h)/2;this.solid=true;}}
