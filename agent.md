@@ -106,3 +106,7 @@ TrackWorkspaceTransfer transporte une copie validée du tracé et du bilan mesur
 
 ### Lecture géométrique et cadrage des points
 track-review.js reste un service pur : validation KartTrack, longueurs 3D, angles et rayons locaux, pentes. Ne jamais fournir une ligne de course ou des vitesses issues de ce diagnostic aux véhicules ou réseaux. Les seuils de repérage (angle 60°, rayon demi-largeur + 25, pente 35 %) sont des conseils inclusifs, pas des prédictions. Compter les indices d’attention uniques et borner à six repères espacés ; conserver un état explicite pour les brouillons invalides. TrackReviewView est du DOM, constructionPointFrame/focusPoint sont de la présentation ; utiliser les poignées existantes, inclure le dernier sommet fermé et le dégagement des façades. L’Académie suit le tracé effectivement affiché sans démarrer de calcul. Tester tests/kart-track-review.test.mjs et le vrai navigateur ; rapport kart/TRACK-REVIEW-VALIDATION.md.
+
+
+## Projets persistants
+Saved-projects conserve objectif, circuit exact et réseau validé dans une seule écriture KartStorage. Ne pas écraser un homonyme, ne pas résoudre un circuit par son nom, ni confondre sauvegarde du réseau et reprise de population. La bibliothèque lance la conduite manuelle ou la relecture EvolutionView existante, sans apprentissage. Un modèle en relecture locale ne doit pas être remplacé par le polling du service. Les exports/imports sont bornés à 2 Mo. Tester tests/kart-saved-projects.test.mjs ; rapport kart/SAVED-PROJECTS-VALIDATION.md. Aucun changement de vehicle.js.
