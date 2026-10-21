@@ -19,7 +19,7 @@ class KartBehaviors{
 
  static predictive(k,others){const threat=KartPerception.nearest(k,others,o=>o.alive&&p5.Vector.dist(SteeringBehaviors.predict(k,12),SteeringBehaviors.predict(o,12))<65,140);return threat?SteeringBehaviors.evade(k,threat,12):createVector(0,0);}
 
- static bounds(k){return SteeringBehaviors.boundaries(k,{x:0,y:0,width:KC.W,height:KC.H},70);}
+ static bounds(k,w){return SteeringBehaviors.boundaries(k,{x:0,y:0,width:w?.arena.width??KC.W,height:w?.arena.height??KC.H},70);}
 
  static plan(k,w){const manager=k.behaviors;const avoidance=this.avoid(k,w);manager.entries.clear();const add=(name,calculate,weight=1,priority=0)=>manager.add({name,calculate,priority},weight);manager.strategy='weighted';const p=k.perception,neighbors=w.karts.filter(o=>o.alive&&o!==k);
 
@@ -42,7 +42,7 @@ class KartBehaviors{
 
  else if(k.route.length)add('path-following',()=>this.path(k,k.route));else{add('wander',()=>SteeringBehaviors.wander(k,w.rng));k.intent='Exploration';}}
 
- add('obstacle-avoidance',()=>avoidance,2.4);add('predictive-avoidance',()=>this.predictive(k,neighbors),.35);add('separation',()=>SteeringBehaviors.separation(k,neighbors),.7);add('boundaries',()=>this.bounds(k),2);
+ add('obstacle-avoidance',()=>avoidance,2.4);add('predictive-avoidance',()=>this.predictive(k,neighbors),.35);add('separation',()=>SteeringBehaviors.separation(k,neighbors),.7);add('boundaries',()=>this.bounds(k,w),2);
 
  let force=manager.getSteeringForce({});if(avoidance.mag()>0){manager.last.priority='obstacle-avoidance';force=avoidance.copy().limit(k.maxForce);}manager.last.force={x:force.x,y:force.y};k.planningForce={x:force.x,y:force.y};k.neighborIds=neighbors.filter(o=>p5.Vector.dist(k.pos,o.pos)<250).map(o=>({id:o.id,x:o.pos.x,y:o.pos.y}));return force;
 

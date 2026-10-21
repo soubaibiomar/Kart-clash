@@ -10,7 +10,7 @@ export function reviewTrack(data){
  for(let i=track.closed?0:1;i<(track.closed?n:n-1);i++){
   const a=p[(i+n-1)%n],b=p[i],c=p[(i+1)%n],ux=b.x-a.x,uy=b.y-a.y,vx=c.x-b.x,vy=c.y-b.y,cross=ux*vy-uy*vx,dot=ux*vx+uy*vy,angle=Math.atan2(cross,dot),degrees=Math.abs(angle)*180/Math.PI;
   if(degrees<5-1e-9)continue;bends++;
-  const radius=Math.abs(cross)>1e-9?Math.hypot(ux,uy)*Math.hypot(vx,vy)*Math.hypot(c.x-a.x,c.y-a.y)/(2*Math.abs(cross)):0,threshold=track.width/2+25,sharp=degrees>=60-1e-9,attention=radius<=threshold+1e-9||sharp;
+  const radius=Math.abs(cross)>1e-9?Math.hypot(ux,uy)*Math.hypot(vx,vy)*Math.hypot(c.x-a.x,c.y-a.y)/(2*Math.abs(cross)):0,threshold=KartTrack.widthAt(track,i)/2+25,sharp=degrees>=60-1e-9,attention=radius<=threshold+1e-9||sharp;
   features.push({kind:'bend',index:i,angle:degrees,direction:angle>=0?'droite':'gauche',radius,sharp,attention,score:attention?Math.max(threshold/Math.max(1,radius),degrees/60):degrees/180});
  }
  features.sort((a,b)=>Number(b.attention)-Number(a.attention)||b.score-a.score||a.index-b.index||a.kind.localeCompare(b.kind));

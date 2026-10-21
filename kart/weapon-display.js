@@ -11,12 +11,13 @@ const visuals={
 const clamp=n=>Math.max(0,Math.min(1,n));
 
 export function weaponDisplayState(k,w,items){
+ if(k.itemRoll){const kinds=['rocket','shield','boost','homing','mine'],kind=kinds[Math.floor(w.time*12)%kinds.length],v=visuals[kind];return {kind,...v,name:'Objet surprise…',hint:'Le résultat dépend de ta position en course.',category:'Tirage en cours',ammo:0,maxAmmo:0,status:'waiting',label:'Surprise !',remaining:Math.max(0,k.itemRoll.until-w.time),readiness:0,effects:[],rolling:true};}
  const kind=k.alive&&Object.hasOwn(visuals,k.item)&&Object.hasOwn(items,k.item)&&Number.isInteger(k.ammo)&&k.ammo>0?k.item:'empty';
  const v=visuals[kind],def=items[kind],ammo=def?Math.max(0,Math.min(def.ammo,Math.floor(k.ammo))):0;
  const remaining=Math.max(0,(k.fireAt||0)-w.time);
  const saturated=kind==='mine'?w.mines.length>=32:['rocket','homing','rapid'].includes(kind)&&w.projectiles.length>=128;
  const status=w.weapons?.availability(k,w)||(!k.alive?'respawn':w.paused?'paused':w.phase!=='playing'?'waiting':kind==='empty'?'empty':saturated?'full':remaining>0?'cooldown':'ready');
- const label={respawn:'Réapparition',paused:'En pause',waiting:w.phase==='finished'?'Manche terminée':'Départ imminent',empty:'À récupérer',full:'Arène saturée',blocked:'Pas de place derrière',cooldown:'Recharge',ready:'Prêt à utiliser'}[status];
+ const label={respawn:'Réapparition',paused:'En pause',waiting:w.time<(k.spinUntil||0)?'Tête-à-queue':w.phase==='finished'?'Manche terminée':'Départ imminent',empty:'À récupérer',full:'Arène saturée',blocked:'Pas de place derrière',cooldown:'Recharge',ready:'Prêt à utiliser'}[status];
  const effects=k.alive?['shield','boost'].flatMap(id=>{const seconds=Math.max(0,(k[id==='shield'?'shieldUntil':'boostUntil']||0)-w.time);return seconds>0?[{kind:id,name:items[id].name,seconds,fraction:clamp(seconds/items[id].duration),color:visuals[id].color}]:[];}):[];
  const hint=kind==='rapid'?`${def.ammo} balles · ${def.damage} dégâts par impact`:def?.damage?v.hint.replace(/\d+ dégâts/,def.damage+' dégâts'):def?.duration?v.hint.replace(/\d+ secondes/,def.duration+' secondes'):v.hint;
  return {kind,...v,hint,name:def?def.name:'Trouve ton prochain atout',ammo,maxAmmo:def?.ammo||0,status,label,remaining,readiness:clamp(1-remaining/(k.fireInterval||(kind==='rapid'?.12:.45))),effects};
@@ -35,10 +36,10 @@ export class WeaponDisplay{
  }
  update(k,w,items){
   const s=weaponDisplayState(k,w,items),p=this.parts;
-  if(this.kind!==s.kind){p.art.innerHTML=weaponIllustration(s.kind);this.host.style.setProperty('--weapon-color',s.color);this.host.dataset.weapon=s.kind;this.kind=s.kind;}
-  this.host.dataset.state=s.status;
+  if(this.kind!==s.kind){p.art.innerHTML=weaponIllustration(s.rolling&&this.host.dataset.reduced==='true'?'empty':s.kind);this.host.style.setProperty('--weapon-color',s.color);this.host.dataset.weapon=s.kind;this.kind=s.kind;}
+  this.host.dataset.state=s.status;this.host.dataset.rolling=String(!!s.rolling);
   p.status.textContent=s.label;p.category.textContent=s.category;p.name.textContent=s.name;p.hint.textContent=s.hint;
-  p.ammo.hidden=s.kind==='empty';p.ammo.querySelector('strong').textContent=s.ammo;p.ammo.querySelector('span').textContent=s.kind==='rapid'?`/ ${s.maxAmmo} balles`:'utilisation';
+  p.ammo.hidden=s.kind==='empty'||s.rolling;p.ammo.querySelector('strong').textContent=s.ammo;p.ammo.querySelector('span').textContent=s.kind==='rapid'?`/ ${s.maxAmmo} balles`:'utilisation';
   p.pips.hidden=s.kind!=='rapid';[...p.pips.children].forEach((el,i)=>el.classList.toggle('loaded',i<s.ammo));
   p.command.hidden=s.kind==='empty';p.command.querySelector('span').textContent=s.status==='cooldown'?`Recharge · ${s.remaining.toFixed(1).replace('.',',')} s`:s.status==='ready'?s.action:s.label;
   p.reload.hidden=s.status!=='cooldown';p.reload.setAttribute('aria-valuenow',String(Math.round(s.readiness*100)));p.reload.firstElementChild.style.width=(s.readiness*100)+'%';
@@ -46,7 +47,14 @@ export class WeaponDisplay{
   const effectKey=s.effects.map(e=>e.kind).join(',');
   if(effectKey!==this.effectKey){p.effects.innerHTML=s.effects.map(e=>`<div class="weapon-effect" data-effect="${e.kind}" style="--effect-color:${e.color}"><div><span>${e.name} actif</span><time></time></div><div class="weapon-effect-meter" role="progressbar" aria-label="Durée du ${e.name.toLowerCase()}" aria-valuemin="0" aria-valuemax="100"><i></i></div></div>`).join('');this.effectKey=effectKey;}
   s.effects.forEach((e,i)=>{const el=p.effects.children[i];el.querySelector('time').textContent=e.seconds.toFixed(1).replace('.',',')+' s';const bar=el.querySelector('[role=progressbar]');bar.setAttribute('aria-valuenow',String(Math.round(e.fraction*100)));bar.firstElementChild.style.width=e.fraction*100+'%';});
-  const announcement=s.kind+':'+(s.status==='respawn');if(announcement!==this.announcement){p.announcement.textContent=s.status==='respawn'?'Kart éliminé. Réapparition en cours.':s.kind==='empty'?'Emplacement libre. Ramasse une caisse.':`${s.name} équipé. ${s.ammo} ${s.kind==='rapid'?'balles':'utilisation'}. Espace pour utiliser.`;this.announcement=announcement;}
+  const announcement=s.rolling?'rolling':s.kind+':'+(s.status==='respawn');if(announcement!==this.announcement){p.announcement.textContent=s.rolling?'Objet surprise en cours de sélection.':s.status==='respawn'?'Kart éliminé. Réapparition en cours.':s.kind==='empty'?'Emplacement libre. Ramasse une caisse.':`${s.name} équipé. ${s.ammo} ${s.kind==='rapid'?'balles':'utilisation'}. Espace pour utiliser.`;this.announcement=announcement;}
   return s;
  }
+}
+
+/** Pickup feedback must not name a still-hidden roulette result. */
+export function pickupNotice(event,items){
+ if(event.id!==0||!['pickup','item-ready'].includes(event.type))return null;
+ const name=items[event.item]?.name;
+ return name?name+' · Espace pour utiliser':event.type==='pickup'?'Objet surprise · tirage en cours…':null;
 }

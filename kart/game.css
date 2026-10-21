@@ -127,3 +127,14 @@ body[data-page=play] .topbar,body[data-page=setup] .topbar,body[data-page=garage
 .project-library{grid-column:1/-1;padding:24px;background:#17262d;border:1px solid #465763;border-radius:12px;color:#f1f5f4}.project-library p,.project-save small{line-height:1.6}.project-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}.project-list article{padding:18px;background:#21343b;border-radius:8px}.project-list h3{margin-top:0}.project-list .row{flex-wrap:wrap;margin-top:16px}.project-library input[type=file]{display:block;max-width:100%;margin:8px 0}.project-save{margin:24px 0;padding:18px;border:1px solid #79909b;border-radius:8px}.project-save label{display:block;margin:12px 0}.project-save small{display:block;margin-top:12px}
 
 @media(max-width:420px){.sheet.project-library{top:154px}}
+
+.race-selection{margin-bottom:14px}.race-selection fieldset{margin:12px 0;padding:12px;border:1px solid #627787;border-radius:8px}.race-selection legend{font-weight:600}.race-selection p{font-size:12px;line-height:1.5}.race-selection #race-pilot-list{max-height:150px;overflow:auto}.race-selection #race-pilot-list label{display:flex;gap:10px;align-items:center;padding:7px 0}.lobby-launch{max-height:calc(100vh - 160px);overflow:auto}@media(max-width:700px){.lobby-launch{max-height:none;overflow:visible}.lobby{justify-content:flex-start}}
+@media(max-width:420px){.lobby{top:154px}}
+
+.track-draftbar{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.track-local-width{margin:16px 0;padding:16px;background:#e2edf0;border:1px solid #b4cbd3;border-radius:10px}.track-local-width h2{font-size:17px;margin:0 0 8px}.track-local-width p{font-size:12px;line-height:1.5}.track-local-width input{width:100%}.track-local-width button{margin-top:10px}
+
+/* Grand Prix: clear race position, compact toy-like item panel. */
+.kart-position{position:absolute;left:24px;top:86px;min-width:120px;padding:12px 18px;background:#283c70;color:#fff4c6;border:4px solid #fff4c6;border-radius:22px;box-shadow:0 6px 0 #17284e;transform:rotate(-3deg)}
+.kart-position b{font-size:64px;line-height:1;font-weight:900;text-shadow:3px 3px #ed6694}.kart-position span{font-size:22px}.kart-position small{display:block;font-weight:900;letter-spacing:.12em;color:#80f0d2;margin-top:8px}
+.hud[data-kart="true"] .health{display:none}.hud[data-kart="true"] .race-guide{top:auto;bottom:24px}.hud[data-kart="true"] .team-score{background:#624ca3;border-bottom:3px solid #e6b6ff}.hud[data-kart="true"] .weapon-panel{border:4px solid #fff4c6;border-radius:24px;box-shadow:0 6px 0 #17284e;background:#283c70}.weapon-panel[data-rolling="true"] .weapon-art{filter:drop-shadow(0 0 15px #ffe672)}
+@media(max-width:700px){.kart-position{top:76px;left:12px;min-width:80px;padding:8px 12px}.kart-position b{font-size:40px}.kart-position span{font-size:16px}.kart-position small{font-size:10px}.hud[data-kart="true"] .race-guide{bottom:12px}}

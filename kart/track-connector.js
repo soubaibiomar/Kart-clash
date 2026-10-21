@@ -20,7 +20,7 @@ export class TrackConnector{
   for(let i=0;i<=count;i++){
    const s=length*i/count;while(cursor<distances.length-1&&distances[cursor]<s)cursor++;
    const lo=cursor-1,f=(s-distances[lo])/(distances[cursor]-distances[lo]||1),height=last.elevation+(first.elevation-last.elevation)*(lead+s)/(length+2*lead);
-   added.push({x:dense[lo].x+(dense[cursor].x-dense[lo].x)*f,y:dense[lo].y+(dense[cursor].y-dense[lo].y)*f,elevation:height,kind:height>0||last.elevation>0||first.elevation>0?'bridge':'road'});
+   added.push({...((first.width!==undefined||last.width!==undefined)?{width:(last.width??source.width)+((first.width??source.width)-(last.width??source.width))*(lead+s)/(length+2*lead)}:{}),x:dense[lo].x+(dense[cursor].x-dense[lo].x)*f,y:dense[lo].y+(dense[cursor].y-dense[lo].y)*f,elevation:height,kind:height>0||last.elevation>0||first.elevation>0?'bridge':'road'});
   }
   const kind=added[0].kind;points.at(-1).kind=kind;
   const result=KartTrack.validate({...source,closed:true,points:[...points,...added]});
@@ -28,7 +28,7 @@ export class TrackConnector{
   for(let i=points.length-1;i<result.points.length;i++){
    const p=result.points[(i-1+result.points.length)%result.points.length],q=result.points[i],r=result.points[(i+1)%result.points.length];
    const u=Math.hypot(q.x-p.x,q.y-p.y),v=Math.hypot(r.x-q.x,r.y-q.y),chord=Math.hypot(r.x-p.x,r.y-p.y),cross=Math.abs((q.x-p.x)*(r.y-q.y)-(q.y-p.y)*(r.x-q.x));
-   if(chord<8||cross>1e-6&&u*v*chord/(2*cross)<result.width/2+25)throw Error('Raccord trop serré pour cette largeur : augmente son amplitude ou déplace une extrémité.');
+   if(chord<8||cross>1e-6&&u*v*chord/(2*cross)<KartTrack.widthAt(result,i)/2+25)throw Error('Raccord trop serré pour cette largeur : augmente son amplitude ou déplace une extrémité.');
   }
   const preview=[{...result.points[points.length-1]},...added.map(p=>({...p})),{...result.points[0]}];
   return {track:result,preview,length:length+2*lead,added:added.length};

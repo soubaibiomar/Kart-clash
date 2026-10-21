@@ -49,6 +49,6 @@ test('piece sliders change their own geometric dimensions without moving the exi
 
 test('entity inventory and browser script inventory cover every physical class exactly once',()=>{
  const g=load(),html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),files=readdirSync(new URL('../kart/entities/',import.meta.url)).filter(n=>n.endsWith('.js'));
- assert.equal(files.length,21);
+ assert.equal(files.length,22);
  for(const file of files){const source=readFileSync(new URL('../kart/entities/'+file,import.meta.url),'utf8'),classes=[...source.matchAll(/class\s+(\w+)\s+extends\s+(\w+)/g)];assert.equal(classes.length,1,file);const [,name,parent]=classes[0];assert.ok(g[name].prototype instanceof g.Vehicle,name);assert.equal(Object.getPrototypeOf(g[name].prototype),g[parent].prototype);assert.equal(html.split('kart/entities/'+file).length-1,1,file);}
 });

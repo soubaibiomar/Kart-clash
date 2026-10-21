@@ -33,10 +33,14 @@ def validate(options):
 
 def validate_track(t):
     if not isinstance(t,dict) or t.get('schema') not in ['kart-track-v1','kart-track-v2'] or not isinstance(t.get('name'),str) or not 1<=len(t['name'].strip())<=60 or type(t.get('closed')) is not bool or type(t.get('width')) not in [int,float] or not 120<=t['width']<=320 or not isinstance(t.get('points'),list) or not 3<=len(t['points'])<=240:raise ValueError('Circuit invalide')
+    if 'cityDensity' in t and (type(t['cityDensity']) not in [int,float] or not math.isfinite(t['cityDensity']) or not 0<=t['cityDensity']<=1):raise ValueError('Densité invalide')
+    bounds=t.get('bounds',{'width':1800,'height':1400})
+    if not isinstance(bounds,dict) or any(type(bounds.get(k)) not in [int,float] or not math.isfinite(bounds[k]) or not lo<=bounds[k]<=hi for k,lo,hi in [('width',1800,5400),('height',1400,4200)]) or ('bounds' in t and t['schema']!='kart-track-v2'):raise ValueError('Terrain invalide')
     length=0
     for i,p in enumerate(t['points']):
-        if not isinstance(p,dict) or any(type(p.get(k)) not in [int,float] or not math.isfinite(p[k]) or not lo<=p[k]<=hi for k,lo,hi in [('x',80,1720),('y',80,1320)]):raise ValueError('Point hors zone')
+        if not isinstance(p,dict) or any(type(p.get(k)) not in [int,float] or not math.isfinite(p[k]) or not lo<=p[k]<=hi for k,lo,hi in [('x',80,bounds['width']-80),('y',80,bounds['height']-80)]):raise ValueError('Point hors zone')
         if t['schema']=='kart-track-v2' and (type(p.get('elevation')) not in [int,float] or not math.isfinite(p['elevation']) or not 0<=p['elevation']<=240 or p.get('kind') not in ['road','bridge','tunnel']):raise ValueError('Altitude ou portion invalide')
+        if 'width' in p and (t['schema']!='kart-track-v2' or type(p['width']) not in [int,float] or not math.isfinite(p['width']) or not 120<=p['width']<=320):raise ValueError('Largeur locale invalide')
         if i:
             a=t['points'][i-1];d=math.hypot(p['x']-a['x'],p['y']-a['y'])
             if d<8:raise ValueError('Points trop proches')

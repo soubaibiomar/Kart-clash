@@ -11,6 +11,7 @@ export function copyTrackWorkspace(value){
 }
 export function createTrackWorkspace(w){
  if(!w.trackTrial||w.phase!=='finished')throw Error('Le parcours doit être terminé avant de transmettre son bilan.');
+ if((w.options.raceLaps||1)>1)return copyTrackWorkspace({track:w.trackTrial.data});
  const s=w.player.trackState,t=w.trackTrial.data;
  return copyTrackWorkspace({track:t,summary:{time:w.time,passed:s.passed,total:t.points.length-(t.closed?0:1),contacts:w.player.contactCount||0,complete:!!s.finished,controller:w.options.autopilot?'neural':'manual'}});
 }
@@ -21,7 +22,7 @@ export class TrackWorkspaceTransfer{
 }
 export function sameWorkspaceTrack(workspace,track){
  if(!workspace||!track)return false;
- const key=t=>JSON.stringify({schema:t.schema,width:t.width,closed:t.closed,points:t.points.map(p=>[p.x,p.y,p.elevation||0,p.kind||'road'])});
+ const key=t=>JSON.stringify({schema:t.schema,width:t.width,...(t.bounds!==undefined?{bounds:t.bounds}:{}),...(t.cityDensity!==undefined?{cityDensity:t.cityDensity}:{}),closed:t.closed,points:t.points.map(p=>[p.x,p.y,p.elevation||0,p.kind||'road',...(p.width!==undefined?[p.width]:[])])});
  try{return key(KartTrack.validate(workspace.track))===key(KartTrack.validate(track));}catch{return false;}
 }
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

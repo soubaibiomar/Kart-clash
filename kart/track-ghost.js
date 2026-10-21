@@ -2,7 +2,8 @@
 export const GHOST_LIMIT=1802;
 export function validateTrackGhost(value){
  if(value?.schema!=='kart-track-ghost-v1'||typeof value.key!=='string'||value.key.length>30000||!Number.isFinite(value.time)||value.time<=0||value.time>180||!Array.isArray(value.frames)||value.frames.length<2||value.frames.length>GHOST_LIMIT)throw Error('Relecture de circuit invalide.');
- const frames=value.frames.map((f,i)=>{if(!Array.isArray(f)||f.length!==7||!f.every(Number.isFinite)||f[0]<0||f[0]>value.time||(i&&f[0]<=value.frames[i-1][0])||f[1]<-100||f[1]>1900||f[2]<-100||f[2]>1500||f[3]<-20||f[3]>260||Math.abs(f[4])>1e6||Math.abs(f[5])>1||Math.abs(f[6])>1)throw Error('Pose de relecture invalide.');return [...f];});
+ let bounds={width:1800,height:1400};try{const b=JSON.parse(value.key).bounds;if(b&&Number.isFinite(b.width)&&b.width>=1800&&b.width<=5400&&Number.isFinite(b.height)&&b.height>=1400&&b.height<=4200)bounds=b;}catch{}
+ const frames=value.frames.map((f,i)=>{if(!Array.isArray(f)||f.length!==7||!f.every(Number.isFinite)||f[0]<0||f[0]>value.time||(i&&f[0]<=value.frames[i-1][0])||f[1]<-100||f[1]>bounds.width+100||f[2]<-100||f[2]>bounds.height+100||f[3]<-20||f[3]>260||Math.abs(f[4])>1e6||Math.abs(f[5])>1||Math.abs(f[6])>1)throw Error('Pose de relecture invalide.');return [...f];});
  if(frames[0][0]!==0||frames.at(-1)[0]!==value.time)throw Error('Relecture incomplète.');return {schema:value.schema,key:value.key,time:value.time,frames};
 }
 export function readTrackGhosts(read){try{const values=read();return Array.isArray(values)?values.slice(0,3).flatMap(v=>{try{return [validateTrackGhost(v)];}catch{return [];}}):[];}catch{return [];}}

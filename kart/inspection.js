@@ -19,7 +19,7 @@ export class KartInput {
 export class KartDebug {
  constructor(){this.enabled=false;this.selected=0;this.layers={sensors:true,motion:true,path:true,neighbors:false,threat:true};}
  toggle(value=!this.enabled){this.enabled=!!value;return this.enabled;}
- entities(w){return [...w.karts,...w.projectiles,...w.mines,...w.arena.pickups,...w.arena.solids,...(w.arena.decks||[]),...(w.trackTrial?.markers||w.challenge?.markers||[]),...(w.teamMode?[w.teamMode.core,...w.teamMode.bases]:[])];}
+ entities(w){return [...w.karts,...w.projectiles,...w.mines,...w.arena.pickups,...(w.arena.boostPads||[]),...w.arena.solids,...(w.arena.decks||[]),...(w.trackTrial?.markers||w.challenge?.markers||[]),...(w.teamMode?[w.teamMode.core,...w.teamMode.bases]:[])];}
  entity(w){return this.entities(w).find(k=>String(k.id)===String(this.selected))||w.player;}
  snapshot(w){const k=this.entity(w),m=k.motionSample,p=k.perception;return {
   id:k.id,name:k.name||String(k.id),type:k.constructor.name,inheritance:chain(k),controller:k.controller||(k===w.player?'Clavier':'Entité physique'),goal:k.role?k.role+' · '+(k.intent||''):k.intent||'—',alive:k.alive!==false,

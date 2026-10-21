@@ -1,7 +1,7 @@
 /** Two frozen networks, two independent trials. This service never trains or calls an API. */
 export class EvolutionComparison{
  constructor(first,second,{speed,steps=2400,stagnation=300,seed=2026}={}){
-  const models=[first,second].map(m=>EvolutionBrain.validate(m)),geometry=t=>JSON.stringify({schema:t.schema,width:t.width,closed:t.closed,points:t.points});
+  const models=[first,second].map(m=>EvolutionBrain.validate(m)),geometry=t=>JSON.stringify({schema:t.schema,width:t.width,...(t.bounds!==undefined?{bounds:t.bounds}:{}),...(t.cityDensity!==undefined?{cityDensity:t.cityDensity}:{}),closed:t.closed,points:t.points});
   if(geometry(models[0].track)!==geometry(models[1].track))throw Error('Choisis deux modèles du même circuit : géométrie, largeur et hauteurs identiques.');
   const maximum=Math.min(...models.map(m=>m.driving.maxSpeed));speed??=maximum;
   if(!Number.isFinite(speed)||speed<1.2||speed>maximum||!Number.isInteger(steps)||steps<120||steps>7200||!Number.isInteger(stagnation)||stagnation<30||stagnation>1800||!Number.isInteger(seed)||seed<1||seed>2147483647)throw Error('Conditions de comparaison invalides. Le plafond commun ne peut pas dépasser celui des modèles.');

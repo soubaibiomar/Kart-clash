@@ -4,6 +4,13 @@ import torch
 from train import validate_track, run
 from test_academy import options
 class TrackTests(unittest.TestCase):
+    def test_large_terrain_contract_without_training(self):
+        t={'schema':'kart-track-v2','name':'XL','bounds':{'width':5400,'height':4200},'width':240,'cityDensity':.25,'closed':False,'points':[{'x':x,'y':2200,'elevation':0,'kind':'road','width':140 if i%2 else 320} for i,x in enumerate([2300,3500,4800])]}
+        self.assertEqual(validate_track(t),t)
+        for bounds in [None,{'width':5401,'height':4200},{'width':5400,'height':float('nan')},{'width':True,'height':4200}]:
+            with self.assertRaises(ValueError):validate_track({**t,'bounds':bounds})
+        with self.assertRaises(ValueError):validate_track({k:v for k,v in t.items() if k!='bounds'})
+
     def test_editor_curve_connector_matches_python_track_contract_without_training(self):
         import subprocess
         root=Path(__file__).resolve().parents[2]
@@ -17,6 +24,17 @@ console.log(JSON.stringify(tracks));"""
             self.assertTrue(track['closed'])
 
     def track(self):return dict(schema='kart-track-v1',name='Temporary circuit fixture',width=200,closed=True,points=[dict(x=300,y=300),dict(x=1200,y=300),dict(x=1200,y=1000),dict(x=300,y=1000)])
+    def test_local_widths_and_city_density_roundtrip(self):
+        t=dict(schema='kart-track-v2',name='Tapered road',width=200,cityDensity=.25,closed=False,points=[dict(x=x,y=700,elevation=0,kind='road',width=w) for x,w in [(300,120),(900,320),(1500,140)]])
+        self.assertEqual(validate_track(t),t)
+        import copy
+        for width in [0,119,321,float('nan'),True,'140']:
+            broken=copy.deepcopy(t);broken['points'][1]['width']=width
+            with self.assertRaises(ValueError):validate_track(broken)
+        for density in [-1,2,float('nan'),True]:
+            broken=copy.deepcopy(t);broken['cityDensity']=density
+            with self.assertRaises(ValueError):validate_track(broken)
+
     def test_validation(self):
         self.assertEqual(validate_track(self.track())['width'],200)
         for key,value in [('width',0),('closed',1),('points',[]),('name','')]:

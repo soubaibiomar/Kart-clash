@@ -7,7 +7,7 @@ class KartWeapons{
   const missile=w.projectiles.find(p=>!p.removed&&w.time<p.expires&&p.kind==='homing'&&p.target===k.id&&sameLevel(p)&&distance(p)<=350);if(missile)return {kind:'homing',distance:distance(missile),text:'MISSILE EN APPROCHE · cherche un abri'};
   const mines=w.mines.filter(m=>!m.removed&&w.time>=m.armedAt&&w.time<m.expires&&sameLevel(m)&&!KartWeapons.allied(m.owner,k.id,w)&&distance(m)<=75&&KartWeapons.clearAt(w,k,k.pos,m.pos)).sort((a,b)=>distance(a)-distance(b));return mines.length?{kind:'mine',distance:distance(mines[0]),text:'MINE ARMÉE À PROXIMITÉ · évite le cercle rouge'}:null;
  }
- availability(k,w){if(!k.alive)return 'respawn';if(w.paused)return 'paused';if(w.phase!=='playing')return 'waiting';if(!Object.hasOwn(KC.items,k.item)||!Number.isInteger(k.ammo)||k.ammo<=0)return 'empty';if((k.item==='mine'&&w.mines.length>=32)||(['rocket','homing','rapid'].includes(k.item)&&w.projectiles.length>=128))return 'full';if(w.time<k.fireAt)return 'cooldown';if(k.item==='mine'&&!KartWeapons.clearAt(w,k,k.pos,KartWeapons.minePosition(k),17))return 'blocked';return 'ready';}
+ availability(k,w){if(!k.alive)return 'respawn';if(w.paused)return 'paused';if(w.phase!=='playing')return 'waiting';if(w.time<(k.spinUntil||0))return 'waiting';if(k.itemRoll)return 'waiting';if(!Object.hasOwn(KC.items,k.item)||!Number.isInteger(k.ammo)||k.ammo<=0)return 'empty';if((k.item==='mine'&&w.mines.length>=32)||(['rocket','homing','rapid'].includes(k.item)&&w.projectiles.length>=128))return 'full';if(w.time<k.fireAt)return 'cooldown';if(k.item==='mine'&&!KartWeapons.clearAt(w,k,k.pos,KartWeapons.minePosition(k),17))return 'blocked';return 'ready';}
 
  use(k,w){if(this.availability(k,w)!=='ready')return false;const kind=k.item,def=KartGameplay.item(w.gameplay,kind);
 
@@ -19,7 +19,7 @@ class KartWeapons{
 
  }
 
- damage(target,amount,owner,w,source=null){if(w.paused||!Number.isFinite(amount)||amount<=0||!target.alive||w.phase!=='playing'||w.time<target.protectedUntil||KartWeapons.allied(owner,target.id,w))return false;if(w.time<target.shieldUntil){w.emit('blocked',target);return false;}const dealt=Math.min(target.health,amount),attacker=w.karts.find(k=>k.id===owner);target.health-=dealt;target.damageTaken+=dealt;if(attacker&&attacker!==target){attacker.damageDealt+=dealt;attacker.hits++;}w.emit('hit',target,{owner,damage:dealt,source:source?{x:source.x,y:source.y}:attacker?{x:attacker.pos.x,y:attacker.pos.y}:null});
+ damage(target,amount,owner,w,source=null){if(w.paused||!Number.isFinite(amount)||amount<=0||!target.alive||target.trackState?.finished||w.phase!=='playing'||w.time<target.protectedUntil||KartWeapons.allied(owner,target.id,w))return false;if(w.time<target.shieldUntil){w.emit('blocked',target);return false;}if(w.raceRules)return w.raceRules.hit(target,amount,owner,w);const dealt=Math.min(target.health,amount),attacker=w.karts.find(k=>k.id===owner);target.health-=dealt;target.damageTaken+=dealt;if(attacker&&attacker!==target){attacker.damageDealt+=dealt;attacker.hits++;}w.emit('hit',target,{owner,damage:dealt,source:source?{x:source.x,y:source.y}:attacker?{x:attacker.pos.x,y:attacker.pos.y}:null});
 
  if(target.health<=0){target.drifting=false;KartGameplay.reset(target);target.alive=false;target.deaths++;target.respawnAt=w.time+2;target.vel.set(0,0);target.acc.set(0,0);target.item=null;target.ammo=0;if(attacker&&attacker!==target)attacker.kills++;w.emit('elimination',target,{owner});}return true;
 

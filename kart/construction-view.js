@@ -13,9 +13,9 @@ export function constructionRoute(track,preview){
 /** Presentation camera only: keep the player's street, rather than the city grid, in frame. */
 export function constructionFrame(track,aspect=1,street=false,index=-1){
  const points=track.points;if(!points.length)return {x:900,y:0,z:700,distance:2100,angle:-.8,pitch:.9};
- if(street&&points.length>1){const i=index>=0?Math.min(index,points.length-2):points.length-2,a=points[i],b=points[i+1];return {x:(a.x+b.x)/2,y:((a.elevation||0)+(b.elevation||0))/2+18,z:(a.y+b.y)/2,distance:Math.max(600,track.width*2.5+200),angle:Math.atan2(b.y-a.y,b.x-a.x)+Math.PI,pitch:.4};}
- const xs=points.map(p=>p.x),zs=points.map(p=>p.y),top=Math.max(...points.map(p=>p.elevation||0)),pad=track.width/2+120,span=Math.max((Math.max(...xs)-Math.min(...xs)+2*pad)/Math.max(.3,aspect),Math.max(...zs)-Math.min(...zs)+2*pad);
- return {x:(Math.min(...xs)+Math.max(...xs))/2,y:top/2,z:(Math.min(...zs)+Math.max(...zs))/2,distance:Math.min(3400,Math.max(700,span/Math.sin(24*Math.PI/180)*.76)),angle:-Math.PI/2,pitch:1.15};
+ if(street&&points.length>1){const i=index>=0?Math.min(index,points.length-2):points.length-2,a=points[i],b=points[i+1];return {x:(a.x+b.x)/2,y:((a.elevation||0)+(b.elevation||0))/2+18,z:(a.y+b.y)/2,distance:Math.max(600,Math.max(track.width,...track.points.map(p=>p.width??track.width))*2.5+200),angle:Math.atan2(b.y-a.y,b.x-a.x)+Math.PI,pitch:.4};}
+ const xs=points.map(p=>p.x),zs=points.map(p=>p.y),top=Math.max(...points.map(p=>p.elevation||0)),pad=Math.max(track.width,...track.points.map(p=>p.width??track.width))/2+120,span=Math.max((Math.max(...xs)-Math.min(...xs)+2*pad)/Math.max(.3,aspect),Math.max(...zs)-Math.min(...zs)+2*pad);
+ return {x:(Math.min(...xs)+Math.max(...xs))/2,y:top/2,z:(Math.min(...zs)+Math.max(...zs))/2,distance:Math.min(track.bounds?14000:3400,Math.max(700,span/Math.sin(24*Math.PI/180)*.76)),angle:-Math.PI/2,pitch:1.15};
 }
 
 /** Keep the street camera in front of facades, including at the beginning of a road. */
@@ -30,7 +30,7 @@ export function constructionPointFrame(track,index){
  if(!Number.isInteger(index)||index<0||index>=track.points.length)throw Error('Point de cadrage invalide.');
  const p=track.points[index],next=track.points[(index+1)%track.points.length],previous=track.points[index-1],b=!track.closed&&index===track.points.length-1?previous:next,reverse=!track.closed&&index===track.points.length-1?-1:1;
  const angle=b?Math.atan2((b.y-p.y)*reverse,(b.x-p.x)*reverse)+Math.PI:-.8;
- return {x:p.x,y:(p.elevation||0)+18,z:p.y,distance:Math.max(440,track.width*2.5+120),angle,pitch:.55};
+ return {x:p.x,y:(p.elevation||0)+18,z:p.y,distance:Math.max(440,Math.max(track.width,...track.points.map(p=>p.width??track.width))*2.5+120),angle,pitch:.55};
 }
 
 /** Full-width ghost pavement is a diagnostic, not another physical road. */

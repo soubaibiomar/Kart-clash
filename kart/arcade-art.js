@@ -2,7 +2,7 @@ import {drawCity,urbanMaterial,cityBatch} from './city-art.js';
 import {drawTrackDecks} from './track-geometry.js';
 /** Scenic surfaces decorate existing Vehicle colliders; they do not add invisible collisions. */
 export function drawArcadeArena(r,w){const g=r.worldRoot;
- if(w.arena.decks){drawCity(r,w.arena.track,{buildings:w.arena.buildings,fixtures:w.arena.fixtures});drawTrackDecks(r,w.arena.track,{supports:w.arena.supports});return;}r.box(g,900,-18,700,3400,24,2900,'#71825c');const ground=r.box(g,900,-2,700,1800,6,1400,'#667985');ground.material=urbanMaterial(r,'#667985',true);if(ground.material.map){ground.material.map.repeat.set(36,28);ground.material.map.anisotropy=4;ground.material.bumpMap?.repeat.copy(ground.material.map.repeat);}
+ if(w.arena.decks){drawCity(r,w.arena.track,{buildings:w.arena.buildings,fixtures:w.arena.fixtures,arcade:w.options.raceMode==='kart'});drawTrackDecks(r,w.arena.track,{supports:w.arena.supports});return;}r.box(g,900,-18,700,3400,24,2900,'#71825c');const ground=r.box(g,900,-2,700,1800,6,1400,'#667985');ground.material=urbanMaterial(r,'#667985',true);if(ground.material.map){ground.material.map.repeat.set(36,28);ground.material.map.anisotropy=4;ground.material.bumpMap?.repeat.copy(ground.material.map.repeat);}
  if(!w.trackTrial){
   for(const [x,z,width,depth] of [[900,18,1800,36],[900,1382,1800,36],[18,700,36,1400],[1782,700,36,1400]])r.box(g,x,2,z,width,3,depth,'#f4e9c2');
   for(let i=0;i<12;i++){r.box(g,110+i*140,3,85,55,1,4,'#dce7ef');r.box(g,110+i*140,3,1315,55,1,4,'#dce7ef');}

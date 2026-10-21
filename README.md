@@ -8,8 +8,12 @@ Kart Clash réunit un jeu de combat de karts en 3D, un éditeur de routes et une
 
 > Le jeu fonctionne sans CUDA. L’apprentissage démarre uniquement sur demande depuis l’Académie IA. Aucun multijoueur en ligne n’est implémenté.
 
+![Kart Clash : démonstration commentée](docs/demonstration-v4.jpg)
+
 ## Fonctionnalités
 
+- **Grand Prix arcade — Turbo Cup** : courses de 1 à 5 tours, objets surprises selon la position, bandes turbo, départ turbo et impacts sans élimination.
+- **Grands circuits** : Carnaval Turbo et trois Grand Tour XL ; terrains agrandis, routes larges ou étroites et bâtiments réglables.
 - **Combat arcade** : six objets, bots locaux, dérapage et turbo gagné en conduite Arcade ; chacun pour soi ou capture du noyau.
 - **Circuits personnels** : lignes droites, virages, rampes, ponts, tunnels, largeur réglable, poignées et outils avancés.
 - **Quartiers urbains** : routes entre les bâtiments, chaussées à plusieurs niveaux et caméras de conduite.
@@ -27,6 +31,8 @@ Set-Location C:\Kart-clash
 python kart/build-frontend.py
 python -m http.server 8870 --bind 127.0.0.1
 ```
+
+Pour une copie autonome du [dépôt Kart-clash](https://github.com/soubaibiomar/Kart-clash), placez-vous dans son dossier à la place. Toutes les commandes de ce guide partent du dossier qui contient `index.html` et `kart/`.
 
 Ouvrez [Kart Clash](http://127.0.0.1:8870/dist/kart-clash/index.html#play) et gardez le terminal ouvert. Utilisez cette adresse HTTP plutôt qu’un double-clic sur le fichier HTML : le rendu utilise des modules JavaScript. Après modification des sources, reconstruisez avec `python kart/build-frontend.py`, puis rechargez la page.
 
@@ -50,6 +56,23 @@ Les raccourcis respectent les champs de saisie. Les touches tenues sont effacée
 
 Les objets sont la roquette, le missile guidé, la mine, la rafale, le bouclier et le turbo. Leurs statistiques diffèrent entre Classique et Arcade ; l’interface lit les règles du profil actif. Les mines détectent après armement et tiennent compte du couvert et de l’étage.
 
+## Choisir une course et ses pilotes
+
+Dans **Jouer**, le départ proposé est **Carnaval Turbo · Grand Prix**, **3 tours**, **5 adversaires scriptés**. Le sélecteur **Terrain** donne aussi accès au Stadium, à vos circuits, aux tracés de vos modèles et aux exemples.
+
+| Mode de circuit | Adversaires | Objets et règles |
+| --- | --- | --- |
+| Contre-la-montre | Aucun | Un tour sans armes, chronos personnels et fantôme compatible ; 3 minutes maximum. |
+| Grand Prix arcade | Bots scriptés | Objets surprises, turbo et dérapage ; les impacts provoquent un tête-à-queue sans éliminer le kart. |
+| Course classique | Bots scriptés et réseaux compatibles sauvegardés | Sans armes, contacts actifs. |
+| Course combat | Bots scriptés | Armes, éliminations et réapparitions près de la dernière balise. |
+
+Réglez **Adversaires scriptés** de 0 à 6 et **Tours** de 1 à 5 sur une boucle ; un parcours ouvert se joue sur un passage. En Course classique, les réseaux cochés et les bots partagent la limite de six adversaires. Les courses se terminent à votre arrivée ou à la limite de temps adaptée à la longueur du tracé, entre 3 et 20 minutes. Le classement utilise l'arrivée puis la progression des concurrents encore en piste, pas les éliminations. Rejouer et Recommencer conservent la sélection.
+
+En Grand Prix arcade, ramassez une caisse puis attendez la fin du tirage avant d'utiliser l'objet avec **Espace**. Traversez les bandes turbo ou relâchez **Maj** après un dérapage valide pour accélérer. Une nouvelle pression d'accélération dans les 0,7 dernières secondes du compte à rebours, tenue jusqu'au départ, permet un départ turbo.
+
+La compatibilité d'un réseau utilise la géométrie exacte : hauteurs, largeurs locales, densité et terrain compris. Renommer un circuit ne change pas cette compatibilité. Un départ trop court ou obstrué est refusé : réduisez la grille ou modifiez le tracé. Un réseau entraîné seul peut échouer dans le trafic ; aucun pilote scripté ne le remplace en secret. Les courses partagées n'enregistrent pas de record solo. Le Stadium conserve ses modes de combat et sa sélection d'IA propres.
+
 ## Construire un circuit
 
 1. Ouvrez **Circuits**, puis **Créer un circuit vide**, ou chargez un exemple facultatif.
@@ -64,6 +87,8 @@ Les parcours manuels disposent de chronos, secteurs et d’un fantôme du record
 ## Académie IA et GPU — facultatif
 
 L’académie génétique s’inspire de l’exemple pédagogique 9 du dépôt d’origine : les distances aux bordures entrent dans un réseau qui produit direction et vitesse. La progression alimente la fitness ; sélection, mutations gaussiennes et conservation d’un parent élite produisent la génération suivante. Les candidats ont leurs propres réseaux et essais ; ils ne se percutent pas entre eux.
+
+Le réseau génétique par défaut possède **6 entrées → 12 neurones cachés → 2 sorties**, soit **20 neurones** en comptant les entrées et **110 paramètres**. Les sorties commandent la direction et l’accélération. L’interface permet d’inspecter les capteurs et le réseau, de suivre l’essai en 3D et de modifier sa configuration avant le lancement. Ce réseau de conduite est distinct du réseau historique de combat.
 
 **Répartition des calculs :** CUDA exécute les réseaux, la sélection et les mutations. Physique, capteurs et collisions utilisent le moteur JavaScript partagé sur CPU. Les essais de champions et comparaisons dans le navigateur sont des inférences CPU. Augmenter les cycles accélère le temps simulé, sans fabriquer une meilleure vitesse apprise.
 
@@ -120,13 +145,13 @@ tests/                     Tests JavaScript et construction Python
 dist/kart-clash/            Livraison générée, ignorée par Git
 ```
 
-Le moteur sépare perception, décision, steering et locomotion. Les comportements retournent des forces bornées, appliquées par `applyForce()` et la mise à jour héritée. Les 21 classes d’entités héritent directement ou indirectement de `Vehicle` ; le fantôme est une entité de présentation hors collisions. Interface, caméra, audio et diagnostics restent des services distincts.
+Le moteur sépare perception, décision, steering et locomotion. Les comportements retournent des forces bornées, appliquées par `applyForce()` et la mise à jour héritée. Les 22 classes d’entités héritent directement ou indirectement de `Vehicle` ; le fantôme est une entité de présentation hors collisions. Interface, caméra, audio et diagnostics restent des services distincts.
 
 `vehicle.js` reste inchangé. Consultez [les consignes](agent.md) et [l’architecture](architecture.md) avant de modifier le moteur. Les pages F1, steering et serpent sont des laboratoires historiques conservés ; elles ne sont pas l’entrée de Kart Clash.
 
 ## Tests
 
-Depuis la racine du dépôt :
+Depuis le dossier du projet contenant `kart/` et `tests/` :
 
 ```powershell
 node --test tests/*.test.mjs
@@ -134,9 +159,9 @@ python -m unittest discover -s tests -p test_kart_build.py
 .\gp\training\.venv\Scripts\python.exe -m unittest discover -s kart/academy -p "test_*.py"
 ```
 
-La suite actuelle comprend **376 tests JavaScript**, **3 tests Python de construction** et **29 tests Python de l’Académie**. Ces derniers nécessitent l’environnement Python adapté ; leurs fixtures temporaires ne lancent pas d’entraînement utilisateur.
+Dernière validation enregistrée : **445 tests réussis**, répartis en **411 tests JavaScript**, **3 tests Python de construction** et **31 tests Python de l’Académie**. Ces derniers nécessitent l’environnement Python adapté ; leurs fixtures temporaires ne lancent pas d’entraînement utilisateur.
 
-Rapports : [projets sauvegardés](kart/SAVED-PROJECTS-VALIDATION.md), [apprentissage génétique 3D](kart/EVOLUTION-3D-VALIDATION.md), [éditeur personnel](kart/PERSONAL-TRACK-VALIDATION.md), [comparaison](kart/COMPARISON-VALIDATION.md), [caméras](kart/CAMERA-VALIDATION.md).
+Rapports : [Grand Prix arcade](kart/TURBO-CUP-VALIDATION.md), [grands circuits et courses](kart/LARGE-RACES-VALIDATION.md), [projets sauvegardés](kart/SAVED-PROJECTS-VALIDATION.md), [apprentissage génétique 3D](kart/EVOLUTION-3D-VALIDATION.md), [éditeur personnel](kart/PERSONAL-TRACK-VALIDATION.md), [comparaison](kart/COMPARISON-VALIDATION.md), [caméras](kart/CAMERA-VALIDATION.md).
 
 ## Dépannage
 
@@ -153,4 +178,25 @@ Rapports : [projets sauvegardés](kart/SAVED-PROJECTS-VALIDATION.md), [apprentis
 
 Conduite arcade attachée à la chaussée : pas de simulation automobile homologuée, de saut libre, de circulation civile ou de multijoueur réseau. Les performances et la réussite des réseaux dépendent des circuits, réglages et matériels.
 
-Le code du projet est distribué selon la [licence du dépôt](LICENSE). Les dépendances et données tierces conservent leurs notices : [Three.js](gp/vendor/THREE-LICENSE.txt), [polices](gp/fonts/OFL.txt), [circuits du laboratoire F1](gp/CIRCUIT-LICENSE.txt). Les modèles historiques nécessaires aux laboratoires sont conservés ; les environnements Python, données de session et sorties de calcul locales sont exclus.
+Le code est distribué sous la [licence MIT](LICENSE). Les dépendances et données tierces conservent leurs notices : [Three.js](gp/vendor/THREE-LICENSE.txt), [polices](gp/fonts/OFL.txt), [circuits du laboratoire F1](gp/CIRCUIT-LICENSE.txt). Les modèles historiques nécessaires aux laboratoires sont conservés ; les environnements Python, données de session et sorties de calcul locales sont exclus.
+
+## Routes larges et passages étroits
+
+Les formats de terrain proposés sont **Standard (1800 × 1400)**, **Grand (3600 × 2800)** et **Immense (5400 × 4200)**. Carnaval Turbo et les trois Grand Tour XL utilisent un terrain de 4500 × 3500. Agrandir le terrain ne déplace pas vos points ; une réduction qui couperait la route est refusée.
+
+Dans Circuits, **Exemple : avenues et passages** charge un exemple avec des avenues à 320 unités, des portions étroites à 140, un pont et un tunnel. Les nouveaux brouillons commencent avec une largeur par défaut de 240 et une densité de bâtiments de 25 %. Les anciens circuits gardent leurs données.
+
+**Largeur à l’arrivée** règle les nouvelles portions ; **Largeur au point choisi** ajuste une poignée existante, de 120 à 320. La transition est progressive entre les points. **Bâtiments** règle la densité de 0 à 100 %. Le rendu, les bordures, les supports, les capteurs et les contraintes de chaussée utilisent ces paramètres dans l’éditeur, le jeu et les workers de l’Académie. Les modifications de largeur distinguent les records et les modèles compatibles ; aucun modèle sauvegardé n’est modifié automatiquement.
+
+## Démonstration vidéo
+
+La version **V4 en français dure 6 min 17**, en 1080p, avec voix off, sous-titres et onze chapitres : conduite, steering, capteurs, composition des forces, réseaux neuronaux, évolution génétique, Académie, construction 3D et Grand Prix arcade.
+
+Dans l’espace de travail de développement, les fichiers se trouvent sous `C:\SteeringBehaviours\exports\youtube-kart-clash-20261020\v4\` :
+
+- `Kart-Clash-Demonstration-Commentee-V4-FR.mp4` : montage final.
+- `Sous-titres-FR-v4.srt` : sous-titres séparés.
+- `Publication-YouTube-V4.md` : titre, description et chapitres proposés.
+- `Validation-V4.md` : vérifications du montage.
+
+La vidéo n’est pas publiée sur YouTube et les fichiers vidéo ne sont pas inclus dans ce dossier du dépôt. La démonstration montre des essais réels de modèles sauvegardés et explique la configuration ; aucun nouvel entraînement GPU n’a été lancé pour le tournage.

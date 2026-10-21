@@ -10,7 +10,7 @@ class KartArena{
 
  clear(a,b,r=0){return !this.solids.some(o=>KartCollision.segment(a,b,KartCollision.box(o),r)!==null);}
 
- free(p,r=24){return p.x>=r&&p.x<=KC.W-r&&p.y>=r&&p.y<=KC.H-r&&!this.obstacles.some(o=>p.x>=o.pos.x-o.w/2-r&&p.x<=o.pos.x+o.w/2+r&&p.y>=o.pos.y-o.h/2-r&&p.y<=o.pos.y+o.h/2+r);}
+ free(p,r=24){return p.x>=r&&p.x<=this.width-r&&p.y>=r&&p.y<=this.height-r&&!this.obstacles.some(o=>p.x>=o.pos.x-o.w/2-r&&p.x<=o.pos.x+o.w/2+r&&p.y>=o.pos.y-o.h/2-r&&p.y<=o.pos.y+o.h/2+r);}
 
  // A* selects waypoints. Vehicles still reach them using local steering and contacts.
 

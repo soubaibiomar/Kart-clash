@@ -8,8 +8,12 @@ Kart Clash combines a 3D kart combat game, a road editor and an autonomous drivi
 
 > Playing does not require CUDA. Training starts only when explicitly launched from the AI Academy. Online multiplayer is not implemented.
 
+![Kart Clash narrated demonstration](docs/demonstration-v4.jpg)
+
 ## Features
 
+- **Arcade Grand Prix — Turbo Cup:** races of 1–5 laps, position-based surprise items, boost pads, launch boosts and spin-outs without elimination.
+- **Large circuits:** Carnaval Turbo and three Grand Tour XL layouts; larger terrain, variable road widths and adjustable buildings.
 - **Arcade combat:** six item types, local bots, drifting and earned boosts in Arcade; free-for-all or core capture.
 - **Custom tracks:** straights, corners, ramps, bridges, tunnels, adjustable width, handles and advanced tools.
 - **City environments:** roads between buildings, multiple road levels and driving cameras.
@@ -29,6 +33,8 @@ Set-Location C:\Kart-clash
 python kart/build-frontend.py
 python -m http.server 8870 --bind 127.0.0.1
 ```
+
+For a standalone checkout of [Kart-clash](https://github.com/soubaibiomar/Kart-clash), use its folder instead. All commands in this guide run from the directory containing `index.html` and `kart/`.
 
 Open [Kart Clash](http://127.0.0.1:8870/dist/kart-clash/index.html#play) and keep the terminal running. Use this HTTP address instead of opening the HTML file directly: rendering uses JavaScript modules. After editing sources, run `python kart/build-frontend.py` again and reload the page.
 
@@ -52,6 +58,23 @@ Shortcuts respect text inputs. Held keys are cleared when paused or when focus i
 
 Items include rockets, homing missiles, mines, rapid fire, shields and boosts. Classic and Arcade use different statistics; the HUD reads the active profile’s rules. Mines detect karts after arming and account for cover and road level.
 
+## Choose a race and its drivers
+
+**Jouer** opens with **Carnaval Turbo · Grand Prix**, **3 laps** and **5 scripted opponents**. **Terrain** also offers the Stadium, your saved tracks, model-embedded tracks and examples.
+
+| Circuit mode | Opponents | Items and rules |
+| --- | --- | --- |
+| Contre-la-montre — time trial | None | One lap without weapons, personal timing and compatible ghosts; 3-minute limit. |
+| Grand Prix arcade | Scripted bots | Surprise items, boosts and drifting; hits cause spin-outs without eliminating karts. |
+| Course classique — classic race | Scripted bots and compatible saved networks | No weapons; physical contacts enabled. |
+| Course combat — armed race | Scripted bots | Weapons, eliminations and respawns near the last gate. |
+
+Set **Adversaires scriptés** from 0 to 6 and **Tours** from 1 to 5 on closed loops; open tracks use one pass. In classic races, selected networks and scripted bots share the six-opponent limit. Races end when you finish or at the track-length-dependent time limit, between 3 and 20 minutes. Standings use finish order, then the progress of unfinished rivals, rather than eliminations. Replay and restart retain your selection.
+
+In arcade Grand Prix, collect a crate and wait for the roulette to finish before pressing **Space**. Cross boost pads or release **Shift** after a valid drift to accelerate. A fresh acceleration press within the final 0.7 seconds of the countdown, held until the start, enables a launch boost.
+
+Network compatibility uses exact geometry, including elevations, local widths, density and terrain bounds. Renaming a track does not change compatibility. Short or obstructed starting grids are rejected: reduce the grid or adjust the road. A network trained alone may struggle in traffic; there is no hidden scripted replacement. Shared races do not save solo records. The Stadium retains its own combat modes and AI selection.
+
 ## Build a track
 
 1. Open **Circuits**, then **Créer un circuit vide**, or load an optional example.
@@ -66,6 +89,8 @@ Manual runs include timing, sectors and a personal-best ghost when a compatible 
 ## AI Academy and GPU — optional
 
 The genetic academy follows the approach of educational example 9 from the original repository: border distances enter a network that outputs direction and speed. Progress contributes to fitness; selection, Gaussian mutations and an elite parent produce subsequent generations. Candidates own their networks and trials; they do not collide with each other.
+
+The default genetic network has **6 inputs → 12 hidden neurons → 2 outputs**: **20 neurons** including inputs and **110 parameters**. Outputs control steering and throttle. The interface lets you inspect sensors and the network, follow trials in 3D and configure the next run. This driving network is separate from the historical combat network.
 
 **Compute split:** CUDA runs network inference, selection and mutations. Physics, sensors and collisions use the shared JavaScript engine on CPU. Browser champion tests and comparisons run CPU inference. Increasing cycles speeds up simulated time; it does not manufacture learned speed.
 
@@ -122,13 +147,13 @@ tests/                     JavaScript tests and Python build tests
 dist/kart-clash/            Generated frontend package, ignored by Git
 ```
 
-The engine separates perception, decisions, steering and locomotion. Behaviors return bounded forces, applied through `applyForce()` and inherited integration. All 21 entity classes inherit directly or indirectly from `Vehicle`; the ghost is a presentation entity excluded from collisions. UI, cameras, audio and diagnostics remain separate services.
+The engine separates perception, decisions, steering and locomotion. Behaviors return bounded forces, applied through `applyForce()` and inherited integration. All 22 entity classes inherit directly or indirectly from `Vehicle`; the ghost is a presentation entity excluded from collisions. UI, cameras, audio and diagnostics remain separate services.
 
 `vehicle.js` remains unchanged. Read the [development instructions](agent.md) and [architecture](architecture.md) before modifying the engine. Historical F1, steering and snake labs remain in separate pages; they are not the Kart Clash game entry point.
 
 ## Tests
 
-Run from the repository root:
+Run from the project folder containing `kart/` and `tests/`:
 
 ```powershell
 node --test tests/*.test.mjs
@@ -136,9 +161,9 @@ python -m unittest discover -s tests -p test_kart_build.py
 .\gp\training\.venv\Scripts\python.exe -m unittest discover -s kart/academy -p "test_*.py"
 ```
 
-The current suites contain **376 JavaScript tests**, **3 Python build tests** and **29 Python Academy tests**. Academy tests require the appropriate Python environment; temporary fixtures do not launch user training.
+Latest recorded validation: **445 passing tests**, consisting of **411 JavaScript tests**, **3 Python build tests** and **31 Python Academy tests**. Academy tests require the appropriate Python environment; temporary fixtures do not launch user training.
 
-Reports: [saved projects](kart/SAVED-PROJECTS-VALIDATION.md), [3D genetic learning](kart/EVOLUTION-3D-VALIDATION.md), [personal editor](kart/PERSONAL-TRACK-VALIDATION.md), [comparison](kart/COMPARISON-VALIDATION.md), [cameras](kart/CAMERA-VALIDATION.md). Detailed development reports are primarily in French.
+Reports: [arcade Grand Prix](kart/TURBO-CUP-VALIDATION.md), [large circuits and racing](kart/LARGE-RACES-VALIDATION.md), [saved projects](kart/SAVED-PROJECTS-VALIDATION.md), [3D genetic learning](kart/EVOLUTION-3D-VALIDATION.md), [personal editor](kart/PERSONAL-TRACK-VALIDATION.md), [comparison](kart/COMPARISON-VALIDATION.md), [cameras](kart/CAMERA-VALIDATION.md). Detailed development reports are primarily in French.
 
 ## Troubleshooting
 
@@ -155,4 +180,25 @@ Reports: [saved projects](kart/SAVED-PROJECTS-VALIDATION.md), [3D genetic learni
 
 Driving is arcade-style and attached to road surfaces. There is no certified automotive simulation, free-flight jumping, civilian traffic or network multiplayer. Performance and neural driving success depend on tracks, settings and hardware.
 
-Project code is distributed under the [repository license](LICENSE). Third-party dependencies and data retain their notices: [Three.js](gp/vendor/THREE-LICENSE.txt), [fonts](gp/fonts/OFL.txt), [historical F1 circuits](gp/CIRCUIT-LICENSE.txt). Models needed by historical labs are retained; Python environments, session data and local training outputs are excluded.
+The code is distributed under the [MIT license](LICENSE). Third-party dependencies and data retain their notices: [Three.js](gp/vendor/THREE-LICENSE.txt), [fonts](gp/fonts/OFL.txt), [historical F1 circuits](gp/CIRCUIT-LICENSE.txt). Models needed by historical labs are retained; Python environments, session data and local training outputs are excluded.
+
+## Wide avenues and narrow sections
+
+Terrain presets are **Standard (1800 × 1400)**, **Grand (3600 × 2800)** and **Immense (5400 × 4200)**. Carnaval Turbo and the three Grand Tour XL layouts use 4500 × 3500 terrain. Enlarging terrain does not move your points; shrinking it through an existing road is rejected.
+
+In Circuits, **Exemple : avenues et passages** loads a layout with 320-unit avenues, 140-unit narrow sections, a bridge and a tunnel. New drafts start with a 240-unit default width and 25% building density. Existing tracks keep their data.
+
+**Largeur à l’arrivée** controls new pieces. **Largeur au point choisi** adjusts an existing handle from 120 to 320, with a gradual transition between points. **Bâtiments** adjusts density from 0 to 100%. Rendering, boundaries, supports, sensors and road constraints share these settings across the editor, game and Academy workers. Changed widths distinguish records and compatible models; saved models are never silently updated.
+
+## Video demonstration
+
+The **French V4 demonstration runs for 6 min 17** at 1080p, with narration, subtitles and eleven chapters covering driving, steering, sensors, force composition, neural networks, genetic evolution, the Academy, 3D construction and arcade Grand Prix.
+
+In the development workspace, files are stored under `C:\SteeringBehaviours\exports\youtube-kart-clash-20261020\v4\`:
+
+- `Kart-Clash-Demonstration-Commentee-V4-FR.mp4`: final edit.
+- `Sous-titres-FR-v4.srt`: separate French subtitles.
+- `Publication-YouTube-V4.md`: proposed title, description and chapters.
+- `Validation-V4.md`: editing validation report.
+
+The video has not been published on YouTube, and video files are not included in this project folder. The demonstration includes actual saved-model trials and explains training configuration; no new GPU training was launched for filming.

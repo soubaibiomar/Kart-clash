@@ -1,5 +1,27 @@
 # Consignes locales — Kart Clash
 
+## Grand Prix arcade — Turbo Cup
+
+Le mode `kart` est distinct de `classic`, `armed`, `time` et de l’apprentissage. Il impose le profil Arcade v2, propose Carnaval Turbo avec trois tours/cinq bots par défaut et reste jouable sur les circuits personnels. Ne pas modifier les modèles ou les règles de leurs évaluations pour lui ajouter ces bonus. Les réseaux à deux sorties restent en classique ; les adversaires du Grand Prix sont explicitement scriptés.
+
+`ArcadeRace` compose les règles sans ajouter de locomotion. Les impacts existants déclenchent 0,85 s de tête-à-queue et 1,8 s de protection entre impacts ; le bouclier reste prioritaire. Les commandes pendant le tête-à-queue passent par `Kart.actionForce`, `applyForce` et l’unique mise à jour de Vehicle, sans multiplier directement la vitesse ni animer la position. Pas d’élimination ni de perte de progression dans ce mode.
+
+Chaque `BoostPad` est une entité statique `extends Vehicle`, dans son fichier, enregistrée dans index.html, node-world et l’inspecteur. Le déclenchement utilise un balayage de mouvement, un rayon de 40 et un filtre d’étage de 30 ; un kart doit sortir avant un nouveau déclenchement. Le bonus dure une seconde sans cumul. Le rendu lit le même emplacement et rayon.
+
+Le départ récompense une nouvelle pression sur l’accélérateur dans les 0,7 dernières secondes du compte à rebours (hors dernières 0,05 s), maintenue jusqu’au départ. Maintenir depuis le début ou relâcher n’accorde rien. Le bonus de départ dure 1,2 s, une seule fois. La pause fige ces règles.
+
+Le tirage d’objet dépend du classement au moment de la collecte, utilise le RNG déterministe du monde, dure 0,8 s simulée et interdit une seconde collecte pendant le tirage. Les illustrations tournantes ne consomment aucun RNG ni calcul d’apprentissage ; accessibilité et mouvements réduits restent pris en compte. Les bordures, drapeaux et portique sont du décor des entités existantes, sans nouveaux colliders. Voir `kart/TURBO-CUP-VALIDATION.md` et `tests/kart-arcade-race.test.mjs`.
+
+## Grands circuits et courses armées
+
+`kart-track-v2.bounds` est optionnel : terrain par défaut 1800 × 1400, dimensions finies jusqu’à 5400 × 4200, marge de points 80. Les anciens JSON restent identiques. Conserver ce champ dans validation JS/Python, sauvegardes, modèles et identités de comparaison/chronométrage. Il change le terrain, pas l’échelle des karts ni les largeurs locales. Les trois Grand Tour multiplient uniquement les coordonnées horizontales par 2,5 ; ponts, tunnels, largeurs et altitudes subsistent.
+
+`prepareSession` valide les modes `time`, `classic`, `armed` avant de remplacer le monde. Contre-la-montre : solo, un tour, 180 s. Course : jusqu’à six adversaires au total, 1–5 tours sur boucle, un sur parcours ouvert ; durée adaptée à la longueur, bornée à 180–1200 s. Ne pas attribuer de chrono personnel aux courses avec contacts/armes. Les réseaux génétiques à deux sorties restent utilisables en classique, sans pilote de secours ; le mode armé propose des BotKart explicitement scriptés. Ne pas présenter leurs tirs comme appris.
+
+`TrackRaceWorld` reste un contrôleur ; les karts réutilisent leurs classes héritant de Vehicle. Caisses WeaponCrate sur les tabliers, filtre d’altitude partagé par collecte et boussole, rendu à l’altitude mesurée. Après une élimination : attendre deux secondes simulées, respawn hérité puis restauration explicite sur la dernière portion atteinte, sans effacer balises/tours. Si aucun emplacement libre, différer le retour. Le steering et la locomotion ne téléportent pas. Un kart arrivé ne reçoit plus de dégâts. La pause suspend armes, course et respawn.
+
+Revalider `tests/kart-large-races.test.mjs`, la suite complète et `kart/academy/test_tracks.py`. Le service Python déjà lancé doit être relancé pour recharger sa validation ; ne jamais interrompre un calcul actif. Voir `kart/LARGE-RACES-VALIDATION.md`.
+
 ### Comparaison locale des champions
 `EvolutionComparison` exécute deux EvolutionPopulation indépendantes à un seul candidat. Les modèles sont validés et figés avant lancement, avec géométrie, départ, graine, budget, stagnation et plafond communs. Le plafond ne dépasse pas celui du modèle le plus lent ; ne modifier ni fichiers ni poids sauvegardés. Les noms de circuits peuvent différer, leur géométrie doit être identique. Ne calculer un écart de tour que si les deux essais terminent réellement le circuit. Les imports et rapports sont bornés/validés ; aucun appel à l'API d'apprentissage. ComparisonPanel identifie l'inférence CPU, suspend son essai quand le service est occupé et conserve les conditions de l'essai séparément des prochains réglages. Ses deux vues interpolent les états mesurés dans des mondes d'affichage distincts. Le champion précédent est un instantané en mémoire de la dernière révision reçue. Revalider `tests/kart-comparison.test.mjs` ; rapport `kart/COMPARISON-VALIDATION.md`.
 
@@ -110,3 +132,11 @@ track-review.js reste un service pur : validation KartTrack, longueurs 3D, angle
 
 ## Projets persistants
 Saved-projects conserve objectif, circuit exact et réseau validé dans une seule écriture KartStorage. Ne pas écraser un homonyme, ne pas résoudre un circuit par son nom, ni confondre sauvegarde du réseau et reprise de population. La bibliothèque lance la conduite manuelle ou la relecture EvolutionView existante, sans apprentissage. Un modèle en relecture locale ne doit pas être remplacé par le polling du service. Les exports/imports sont bornés à 2 Mo. Tester tests/kart-saved-projects.test.mjs ; rapport kart/SAVED-PROJECTS-VALIDATION.md. Aucun changement de vehicle.js.
+
+
+## Courses avec pilotes sauvegardés
+Race-selection sélectionne les circuits par données détachées, y compris ceux embarqués dans les modèles. Valider les réseaux border-rays et leur géométrie exacte avant de remplacer le monde courant. TrackRaceWorld étend KartWorld et réutilise EvolutionKart, EvolutionBrain.observe/predict, applyForce et une seule locomotion héritée. Aucun pilotage par checkpoint : les balises mesurent seulement la progression. Grille bornée à six rivaux, séparée et validée contre les vrais colliders. Les arrivés ne reçoivent plus de steering ; le classement utilise balises et temps d’arrivée, pas les éliminations. Pause/replay respectent poids et modèles figés, aucune tâche GPU. Pas de record personnel solo dans une course partagée. vehicle.js inchangé. Tests : tests/kart-race-selection.test.mjs ; rapport kart/RACE-SELECTION-VALIDATION.md.
+
+
+## Largeur locale et densité urbaine
+Le format kart-track-v2 accepte points[i].width (120–320) et cityDensity (0–1). Sans largeur locale, utiliser track.width ; sans densité, conserver l’ancien décor complet. Nouveaux brouillons : largeur 240, densité .25. KartTrack.widthAt interpole les largeurs ; offset/expanded décrivent la même empreinte pour deck, bordures, trottoirs et coques. TrackSegment.sample fournit la largeur physique interpolée à TrackSurface ; la locomotion Vehicle reste unique. Ne pas réintroduire une largeur constante pour les capteurs ou les colliders. Les bâtiments sont filtrés de façon déterministe après réserve du vrai tracé, sans RNG. L’assemblage et le raccord conservent/interpolent les largeurs. Les validations Python/JS, enregistrements, transferts et comparaisons doivent garder ces données et distinguer les changements de profil. Ne pas migrer les circuits/modèles de l’utilisateur. Tests : tests/kart-road-width.test.mjs, kart/academy/test_tracks.py ; rapport kart/VARIABLE-ROAD-WIDTH-VALIDATION.md. vehicle.js inchangé.
