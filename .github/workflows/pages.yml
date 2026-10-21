@@ -1,0 +1,55 @@
+name: Deploy Kart Clash to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Test game rules
+        run: node --test tests/*.test.mjs
+      - name: Test public package and project-path hosting
+        run: python -m unittest discover -s tests -p 'test_kart*.py'
+      - name: Build public files only
+        run: |
+          python kart/build-frontend.py
+          touch dist/kart-clash/.nojekyll
+          cp LICENSE dist/kart-clash/LICENSE
+          cp gp/vendor/THREE-LICENSE.txt dist/kart-clash/gp/vendor/THREE-LICENSE.txt
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/kart-clash
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy verified public package
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -10,6 +10,10 @@ Kart Clash combines a 3D kart combat game, a road editor and an autonomous drivi
 
 ![Kart Clash narrated demonstration](docs/demonstration-v4.jpg)
 
+**[Play online](https://soubaibiomar.github.io/Kart-clash/)** · [GitHub Pages deployment](kart/GITHUB-PAGES.md)
+
+The hosted version runs the game and editor. CUDA training requires the local setup below. Export/import JSON to transfer saved projects between the local and hosted versions.
+
 ## Features
 
 - **Arcade Grand Prix — Turbo Cup:** races of 1–5 laps, position-based surprise items, boost pads, launch boosts and spin-outs without elimination.
@@ -161,7 +165,7 @@ python -m unittest discover -s tests -p test_kart_build.py
 .\gp\training\.venv\Scripts\python.exe -m unittest discover -s kart/academy -p "test_*.py"
 ```
 
-Latest recorded validation: **445 passing tests**, consisting of **411 JavaScript tests**, **3 Python build tests** and **31 Python Academy tests**. Academy tests require the appropriate Python environment; temporary fixtures do not launch user training.
+Latest recorded validation: **448 passing tests**, consisting of **411 JavaScript tests**, **6 Python build/deployment tests** and **31 Python Academy tests**. Academy tests require the appropriate Python environment; temporary fixtures do not launch user training.
 
 Reports: [arcade Grand Prix](kart/TURBO-CUP-VALIDATION.md), [large circuits and racing](kart/LARGE-RACES-VALIDATION.md), [saved projects](kart/SAVED-PROJECTS-VALIDATION.md), [3D genetic learning](kart/EVOLUTION-3D-VALIDATION.md), [personal editor](kart/PERSONAL-TRACK-VALIDATION.md), [comparison](kart/COMPARISON-VALIDATION.md), [cameras](kart/CAMERA-VALIDATION.md). Detailed development reports are primarily in French.
 

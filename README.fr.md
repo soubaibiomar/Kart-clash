@@ -10,6 +10,10 @@ Kart Clash réunit un jeu de combat de karts en 3D, un éditeur de routes et une
 
 ![Kart Clash : démonstration commentée](docs/demonstration-v4.jpg)
 
+**[Jouer en ligne](https://soubaibiomar.github.io/Kart-clash/)** · [Déploiement GitHub Pages](kart/GITHUB-PAGES.md)
+
+La version hébergée propose le jeu et l’éditeur. L’entraînement CUDA nécessite l’installation locale ci-dessous. Utilisez les exports/imports JSON pour transférer vos projets entre les deux versions.
+
 ## Fonctionnalités
 
 - **Grand Prix arcade — Turbo Cup** : courses de 1 à 5 tours, objets surprises selon la position, bandes turbo, départ turbo et impacts sans élimination.
@@ -159,7 +163,7 @@ python -m unittest discover -s tests -p test_kart_build.py
 .\gp\training\.venv\Scripts\python.exe -m unittest discover -s kart/academy -p "test_*.py"
 ```
 
-Dernière validation enregistrée : **445 tests réussis**, répartis en **411 tests JavaScript**, **3 tests Python de construction** et **31 tests Python de l’Académie**. Ces derniers nécessitent l’environnement Python adapté ; leurs fixtures temporaires ne lancent pas d’entraînement utilisateur.
+Dernière validation enregistrée : **448 tests réussis**, répartis en **411 tests JavaScript**, **6 tests Python de construction/publication** et **31 tests Python de l’Académie**. Ces derniers nécessitent l’environnement Python adapté ; leurs fixtures temporaires ne lancent pas d’entraînement utilisateur.
 
 Rapports : [Grand Prix arcade](kart/TURBO-CUP-VALIDATION.md), [grands circuits et courses](kart/LARGE-RACES-VALIDATION.md), [projets sauvegardés](kart/SAVED-PROJECTS-VALIDATION.md), [apprentissage génétique 3D](kart/EVOLUTION-3D-VALIDATION.md), [éditeur personnel](kart/PERSONAL-TRACK-VALIDATION.md), [comparaison](kart/COMPARISON-VALIDATION.md), [caméras](kart/CAMERA-VALIDATION.md).
 
